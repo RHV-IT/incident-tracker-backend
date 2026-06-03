@@ -9,3 +9,4 @@ git commit -m "$message"
 
 echo "Pushing changes"
 git push
+clear
