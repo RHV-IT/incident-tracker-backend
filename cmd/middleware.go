@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -20,9 +21,12 @@ func (a *application) authMiddleware() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token. Bearer token required"})
 			return 
 		}
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		
+		claims := &Claims{}
+
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, jwt.ErrSignatureInvalid
+				return nil, errors.New("unexpected signing error")
 			}
 			return []byte(a.jwtsecret), nil
 		})
@@ -32,18 +36,7 @@ func (a *application) authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok || !token.Valid {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
-			return
-		}
-		userEmail := claims["email"].(string)
-		user, err := a.models.Users.GetByEmail(c.Request.Context(), userEmail)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to perform database query"})
-			return
-		}
-		c.Set("user", user)
+		c.Set("user", claims)
 		c.Next()
 	}
 }
