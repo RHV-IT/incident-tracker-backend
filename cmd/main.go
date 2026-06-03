@@ -12,6 +12,7 @@ import (
 
 type application struct {
 	port int
+	jwtsecret string
 	db *pgxpool.Pool
 	models db.Models
 }
@@ -25,6 +26,7 @@ func main() {
 	models := db.NewModels(pool)
 	app := &application{
 		port: env.GetEnvInt("PORT", 3001),
+		jwtsecret: env.GetEnvString("jwtSecret", "someSecret"),
 		db: pool,
 		models: models,
 	}

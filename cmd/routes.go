@@ -20,6 +20,7 @@ func (a *application) routes() http.Handler {
 		authGroup := v1.Group("/auth")
 		{
 			authGroup.POST("/register", a.register)
+			authGroup.POST("/login", a.login)
 		}
 	}
 

@@ -3,16 +3,11 @@ package main
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
-
-type RegisterRequest struct {
-	Name string `json:"name" binding:"required"`
-	Email string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required,min=8"`
-	Role string `json:"role" binding:"required"`
-}
 
 
 
@@ -54,4 +49,46 @@ func(a *application) register(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, newUser)
 	
+}
+
+func(a *application) login(c *gin.Context) {
+	context := c.Request.Context()
+	var user loginRequest
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Request"})
+		return
+	}
+	emailClean := strings.ToLower(strings.TrimSpace(user.Email))
+	existingUser, err := a.models.Users.GetByEmail(context, emailClean)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to perform database query"})
+		return
+	}
+	if existingUser == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	if !CompareHash(user.Password, existingUser.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Credentials"})
+		return
+	}
+	claims := &Claims{
+		UserId: existingUser.Id,
+		Role: existingUser.Role,
+		Email: existingUser.Email,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(72 * time.Hour)),
+			IssuedAt: jwt.NewNumericDate(time.Now()),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	tokenString, err := token.SignedString(a.jwtsecret)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": tokenString})
 }
