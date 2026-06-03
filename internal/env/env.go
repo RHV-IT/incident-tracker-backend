@@ -6,7 +6,7 @@ import (
 )
 
 
-func getEnvString(key string, defaultValue string) string {
+func GetEnvString(key string, defaultValue string) string {
 	value, exists := os.LookupEnv(key)
 	if exists {
 		return value
@@ -14,7 +14,7 @@ func getEnvString(key string, defaultValue string) string {
 	return  defaultValue
 }
 
-func getEnvInt(key string, defaultValue int) int {
+func GetEnvInt(key string, defaultValue int) int {
 	value, exists := os.LookupEnv(key)
 	if exists {
 		if intValue, err := strconv.Atoi(value); err == nil {
