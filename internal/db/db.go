@@ -9,6 +9,15 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+type Models struct {
+	Users UserModel
+}
+
+func NewModels(db *pgxpool.Pool) Models {
+	return Models{
+		Users: UserModel{DB: db},
+	}
+}
 
 func InitPool() (*pgxpool.Pool, error) {
 	connStr := env.GetEnvString("dbConnStr", "postgres://tracker_user:tracker_password@localhost:5432/issuetracker")

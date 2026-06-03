@@ -13,6 +13,7 @@ import (
 type application struct {
 	port int
 	db *pgxpool.Pool
+	models db.Models
 }
 
 func main() {
@@ -20,11 +21,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize database connection pool: %v", err)
 	}
+	defer pool.Close()
+	models := db.NewModels(pool)
 	app := &application{
 		port: env.GetEnvInt("PORT", 3001),
 		db: pool,
+		models: models,
 	}
-	defer pool.Close()
 	app.serve()
 	
 }
