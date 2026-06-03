@@ -1,13 +1,30 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"issueTracking/internal/db"
+	"issueTracking/internal/env"
+	"log"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+
+
+type application struct {
+	port int
+	db *pgxpool.Pool
+}
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run()
+	pool, err := db.InitPool()
+	if err != nil {
+		log.Fatalf("Failed to initialize database connection pool: %v", err)
+	}
+	app := &application{
+		port: env.GetEnvInt("PORT", 3001),
+		db: pool,
+	}
+	defer pool.Close()
+	app.serve()
+	
 }
