@@ -34,10 +34,10 @@ func (m *UserModel) GetByEmail(ctx context.Context, email string) (*User, error)
 	return &user, nil
 }
 
-func (m *UserModel) Insert(ctx context.Context, user *User) (*User, error) {
+func (m *UserModel) Insert(ctx context.Context, name, email, password, role string) (*User, error) {
 	query := `INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role`
 	var created User
-	err := m.DB.QueryRow(ctx, query, user.Name, user.Email, user.Password, user.Role).Scan(
+	err := m.DB.QueryRow(ctx, query, name, email, password, role).Scan(
 		&created.Id,
 		&created.Name,
 		&created.Email,
