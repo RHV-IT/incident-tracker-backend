@@ -12,6 +12,11 @@ import (
 
 
 func(a *application) register(c *gin.Context) {
+	userRole := c.GetString("userRole")
+	if userRole != "superadmin" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized. Must be a superadmin"})
+		return
+	}
 	context := c.Request.Context()
 	var user RegisterRequest
 	if err := c.ShouldBindJSON(&user); err != nil {
