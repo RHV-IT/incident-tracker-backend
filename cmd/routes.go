@@ -25,7 +25,7 @@ func (a *application) routes() http.Handler {
 			authGroup.PUT("/disable", a.authMiddleware(), a.disable)
 			authGroup.PUT("/enable",  a.authMiddleware(), a.enable)
 		}
-
+		v1.POST("/incidents", a.authMiddleware(), a.reportIncident)
 	}
 
 	return  g
