@@ -39,6 +39,7 @@ func(a *application) register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
+	departmentClean := strings.ToLower(strings.TrimSpace(user.Department))
 
 	roleClean := strings.ToLower(strings.TrimSpace(user.Role))
 	if roleClean != "reporter" && roleClean != "supervisor" && roleClean != "admin" && roleClean != "superadmin" {
@@ -46,7 +47,7 @@ func(a *application) register(c *gin.Context) {
 		return
 	}
 
-	newUser, err := a.models.Users.Insert(context, user.Name, emailClean, hashedPassword, roleClean)
+	newUser, err := a.models.Users.Insert(context, user.Name, emailClean, hashedPassword, roleClean, departmentClean)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to add user"})
 		return
@@ -82,6 +83,7 @@ func(a *application) login(c *gin.Context) {
 		UserId: existingUser.Id,
 		Role: existingUser.Role,
 		Email: existingUser.Email,
+		Department: existingUser.Department,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(72 * time.Hour)),
 			IssuedAt: jwt.NewNumericDate(time.Now()),

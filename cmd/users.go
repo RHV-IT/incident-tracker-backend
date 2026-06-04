@@ -30,6 +30,7 @@ func(a *application) update(c *gin.Context) {
 	existingUser.Name = user.Name
 	existingUser.Email = user.Email
 	existingUser.Role	= user.Role
+	existingUser.Department = user.Department
 	updatedUser, err := a.models.Users.Update(context, existingUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to perform database query"})
