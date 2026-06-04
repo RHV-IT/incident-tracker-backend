@@ -4,7 +4,7 @@ A RESTful API for tracking incidents/issues built with Go, Gin, and PostgreSQL.
 
 ## Features
 
-- User authentication (registration)
+- User authentication (registration, login, update, disable)
 - Incident reporting and tracking
 - Role-based access control (implied from User model)
 - Docker Compose setup for easy development
@@ -33,7 +33,8 @@ A RESTful API for tracking incidents/issues built with Go, Gin, and PostgreSQL.
 Alternatively, you can use the provided scripts:
 
 - `./createtables.sh` - creates necessary database tables (if not already created)
-- `./login.sh` - (purpose unknown, possibly for db access)
+- `./login.sh` - opens a psql shell to the PostgreSQL container
+- `./commit.sh` - helper script to stage, commit, and push changes
 
 ### Environment Variables
 
@@ -52,9 +53,22 @@ These can be set in a `.env` file or exported in the shell.
 
 ### Authentication
 
-- `POST /api/v1/auth/register` - Register a new user
-  - Request body: `{ "email": "string", "name": "string", "password": "string" }`
+- `POST /api/v1/auth/register` - Register a new user (requires superadmin role)
+  - Request body: `{ "email": "string", "name": "string", "password": "string", "role": "string" }`
   - Password must be at least 8 characters
+  - Role must be one of: reporter, supervisor, admin, superadmin
+
+- `POST /api/v1/auth/login` - Login a user
+  - Request body: `{ "email": "string", "password": "string" }`
+  - Returns a JWT token and user information
+
+- `PUT /api/v1/auth/update` - Update a user (requires superadmin role)
+  - Requires authentication middleware
+  - (Implementation in progress)
+
+- `PUT /api/v1/auth/disable` - Disable a user (requires superadmin role)
+  - Requires authentication middleware
+  - (Implementation in progress)
 
 ### Incidents
 
@@ -69,19 +83,23 @@ The application uses two main tables:
 
 ## Scripts
 
-- `commit.sh` - Helper script for committing changes (custom)
-- `createtables.sh` - Creates database tables (likely runs SQL migrations)
-- `login.sh` - (Unclear purpose, possibly for database access)
+- `commit.sh` - Helper script for committing changes (stages, commits, and pushes)
+- `createtables.sh` - Creates database tables by running the SQL in tables.sql against the database
+- `login.sh` - Opens a psql shell to the PostgreSQL container for direct database access
 
 ## Project Structure
 
 ```
 .
 ├── cmd/                - Application entrypoint and route handlers
-│   ├── auth.go         - Authentication handlers
+│   ├── auth.go         - Authentication handlers (register, login)
 │   ├── main.go         - Application initialization and server startup
+│   ├── middleware.go   - Authentication middleware
 │   ├── routes.go       - Route definitions
-│   └── server.go       - Server configuration
+│   ├── server.go       - Server configuration
+│   ├── types.go        - Type definitions (e.g., request/response structs)
+│   ├── users.go        - User handlers (update, disable)
+│   └── utils.go        - Utility functions (password hashing, etc.)
 ├── internal/           - Private application libraries
 │   ├── db/             - Database models and connection pooling
 │   │   ├── db.go       - Database connection and model initialization
@@ -91,8 +109,10 @@ The application uses two main tables:
 ├── docker-compose.yml  - PostgreSQL service definition
 ├── go.mod              - Go module definition
 ├── go.sum              - Go module checksums
-├── test.sql            - Sample SQL for table creation
-└── README.md
+├── test.sql            - Sample SQL for table creation (same as tables.sql?)
+├── tables.sql          - SQL script to create database tables
+├── README.md
+└── .air.toml           - Configuration for Air (live reload for Go)
 ```
 
 ## Contributing
