@@ -36,7 +36,7 @@ func(a *application) register(c *gin.Context) {
 	}
 
 	roleClean := strings.ToLower(strings.TrimSpace(user.Role))
-	if roleClean != "reporter" && roleClean != "supervisor" && roleClean != "admin" {
+	if roleClean != "reporter" && roleClean != "supervisor" && roleClean != "admin" && roleClean != "superadmin" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role specified"})
 		return
 	}

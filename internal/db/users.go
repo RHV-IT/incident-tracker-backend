@@ -23,8 +23,8 @@ type User struct {
 
 func (m *UserModel) GetByEmail(ctx context.Context, email string) (*User, error) {
 	var user User
-	query := `SELECT id, email, password, role FROM users WHERE email = $1`
-	err := m.DB.QueryRow(ctx, query, email).Scan(&user.Id, &user.Email, &user.Password, &user.Role)
+	query := `SELECT id, name, email, password, role FROM users WHERE email = $1`
+	err := m.DB.QueryRow(ctx, query, email).Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.Role)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, nil
