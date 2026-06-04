@@ -55,7 +55,7 @@ func(a *application) login(c *gin.Context) {
 	context := c.Request.Context()
 	var user loginRequest
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Request"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	emailClean := strings.ToLower(strings.TrimSpace(user.Email))
