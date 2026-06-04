@@ -19,6 +19,7 @@ type User struct {
 	Email string `json:"email"`
 	Password string `json:"-"`
 	Role string `json:"role"`
+	Disabled bool `json:"disabled"`
 }
 
 func (m *UserModel) GetByEmail(ctx context.Context, email string) (*User, error) {
@@ -53,6 +54,24 @@ func (m *UserModel) Insert(ctx context.Context, name, email, password, role stri
 func(m *UserModel) Update(ctx context.Context, user *User) (*User, error) {
 	query := `UPDATE users SET name = $1, email = $2, role = $3 WHERE id = $4`
 	_, err := m.DB.Exec(ctx, query, user.Name, user.Email, user.Role, user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("database query error: %w", err)
+	}
+	return user, nil
+}
+
+func(m *UserModel) DisableUser(ctx context.Context, user *User) (*User, error) {
+	query := `UPDATE users SET disabled = $1 WHERE id = $2`
+	_, err := m.DB.Exec(ctx, query, true, user.Id)
+	if err != nil {
+		return nil, fmt.Errorf("database query error: %w", err)
+	}
+	return user, nil
+}
+
+func(m *UserModel) EnableUser(ctx context.Context, user *User) (*User, error) {
+	query := `UPDATE users SET disabled = $1 WHERE id = $2`
+	_, err := m.DB.Exec(ctx, query, false, user.Id)
 	if err != nil {
 		return nil, fmt.Errorf("database query error: %w", err)
 	}
