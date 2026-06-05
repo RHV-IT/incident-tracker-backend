@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"math"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -45,6 +46,24 @@ type Incident struct {
 	SeverityLevel SeverityLevel `json:"severityLevel"`
 	SupervisorNotified string `json:"supervisorNotified"`
 	RecommendedPreventiveAction string `json:"recommendedPreventiveAction"` 
+}
+
+type IncidentReport struct {
+	ReporterName string `json:"reporterName"`
+	Department string `json:"department"`
+	Position string `json:"position"`
+	ContactInfo string `json:"contactInfo"`
+	DateOfIncident string `json:"dateOfIncident"`
+	TimeOfIncident string `json:"timeOfIncident"`
+	LocationOfIncident string `json:"locationOfIncident"`
+	TypeOfIncident string `json:"typeOfIncident"`
+	PeopleInvolved string `json:"peopleInvolved"`
+	DescriptionOfIncident string `json:"descriptionOfIncident"`
+	ImmediateActionTaken string `json:"immediateActionTaken"`
+	InjuryOrDamage string `json:"injuryOrDamage"` 
+	SeverityLevel SeverityLevel `json:"severityLevel"`
+	SupervisorNotified string `json:"supervisorNotified"`
+	RecommendedPreventiveAction string `json:"recommendedPreventiveAction"`
 }
 
 func (m *IncidentsModel) Insert(ctx context.Context, incident *Incident) (*Incident, error) {
@@ -109,4 +128,48 @@ func (m *IncidentsModel) Insert(ctx context.Context, incident *Incident) (*Incid
 	}
 
 	return incident, nil
+}
+
+func(m *IncidentsModel) FetchIncidents(ctx context.Context, limit, offset int) ([]IncidentReport, int, int, error) {
+	var totalItems int
+	err := m.DB.QueryRow(ctx, "SELECT COUNT(*) FROM incidents").Scan(&totalItems)
+	if err != nil {
+		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
+	}
+	query := `
+		SELECT 
+			reporter_name, department, position, contact_info, 
+			date_of_incident, time_of_incident, location_of_incident, 
+			type_of_incident, people_involved, description_of_incident, 
+			immediate_action_taken, injury_or_damage, severity_level, 
+			supervisor_notified, recommended_preventive_action 
+		FROM incidents 
+		ORDER BY id DESC 
+		LIMIT $1 OFFSET $2
+	`
+	rows, err := m.DB.Query(ctx, query, limit, offset)
+	if err != nil {
+		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
+	}
+	defer rows.Close()
+	var incidents []IncidentReport
+	for rows.Next() {
+		var inc IncidentReport
+		err := rows.Scan(
+			&inc.ReporterName, &inc.Department, &inc.Position, &inc.ContactInfo,
+			&inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident,
+			&inc.TypeOfIncident, &inc.PeopleInvolved, &inc.DescriptionOfIncident,
+			&inc.ImmediateActionTaken, &inc.InjuryOrDamage, &inc.SeverityLevel,
+			&inc.SupervisorNotified, &inc.RecommendedPreventiveAction,
+		)
+		if err != nil {
+			return nil, 0, 0, fmt.Errorf("database query error: %w", err)
+		}
+		incidents = append(incidents, inc)
+	}
+	totalPages := int(math.Ceil(float64(totalItems) / float64(limit)))
+	if totalPages == 0 {
+		totalPages = 1
+	}
+	return incidents, totalPages, totalItems, nil
 }

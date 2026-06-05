@@ -3,13 +3,14 @@ package main
 import (
 	"issueTracking/internal/db"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func(a *application) reportIncident(c *gin.Context) {
 	context := c.Request.Context()
-	var input IncidentReport
+	var input db.IncidentReport
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -48,6 +49,29 @@ func(a *application) reportIncident(c *gin.Context) {
 }
 
 func(a *application) getIncidents(c *gin.Context) {
-	userRole := c.GetString("userRole")
-	c.JSON(http.StatusOK, gin.H{"role": userRole})
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 50 {
+		limit = 10
+	}
+	offset := (page - 1) * limit
+	context := c.Request.Context() 
+	incidents, totalPages, totalItems, err := a.models.Incidents.FetchIncidents(context, limit, offset)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to execute database query"})
+		return
+	}
+	c.JSON(http.StatusOK, PaginatedIncidentResponse{
+		Data: incidents,
+		Pagination: PaginationMeta{
+			CurrentPage: page,
+			PageSize: limit,
+			TotalItems: totalItems,
+			TotalPages: totalPages,
+		},
+	})
 }

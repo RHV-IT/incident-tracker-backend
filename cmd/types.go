@@ -1,6 +1,10 @@
 package main
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"issueTracking/internal/db"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type RegisterRequest struct {
 	Name string `json:"name" binding:"required"`
@@ -55,20 +59,14 @@ func (s SeverityLevel) IsValid() bool {
 	return  false
 }
 
-type IncidentReport struct {
-	ReporterName string `json:"reporterName"`
-	Department string `json:"department"`
-	Position string `json:"position"`
-	ContactInfo string `json:"contactInfo"`
-	DateOfIncident string `json:"dateOfIncident"`
-	TimeOfIncident string `json:"timeOfIncident"`
-	LocationOfIncident string `json:"locationOfIncident"`
-	TypeOfIncident string `json:"typeOfIncident"`
-	PeopleInvolved string `json:"peopleInvolved"`
-	DescriptionOfIncident string `json:"descriptionOfIncident"`
-	ImmediateActionTaken string `json:"immediateActionTaken"`
-	InjuryOrDamage string `json:"injuryOrDamage"` 
-	SeverityLevel SeverityLevel `json:"severityLevel"`
-	SupervisorNotified string `json:"supervisorNotified"`
-	RecommendedPreventiveAction string `json:"recommendedPreventiveAction"`
+type PaginationMeta struct {
+	CurrentPage int   `json:"current_page"`
+	PageSize    int `json:"page_size"`
+	TotalItems  int   `json:"total_items"`
+	TotalPages  int   `json:"total_pages"`
+}
+
+type PaginatedIncidentResponse struct {
+	Data []db.IncidentReport `json:"data"`
+	Pagination PaginationMeta `json:"pagination"`
 }

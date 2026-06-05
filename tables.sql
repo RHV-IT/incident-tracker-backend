@@ -26,3 +26,4 @@ CREATE TABLE incidents (
     supervisor_notified VARCHAR(255) NOT NULL,
     recommended_preventive_action TEXT NOT NULL 
 );
+CREATE INDEX IF NOT EXISTS idx_incidents_id_desc ON incidents (id DESC);
