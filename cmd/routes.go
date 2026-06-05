@@ -2,13 +2,31 @@ package main
 
 import (
 	"net/http"
+	"strings"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func (a *application) routes() http.Handler {
 	g := gin.Default()
 	g.RedirectTrailingSlash = true
+
+	allowedOrigins := strings.Split(a.origins, ",")
+
+	for i, origin := range allowedOrigins {
+		allowedOrigins[i] = strings.TrimSpace(origin)
+	}
+
+	g.Use(cors.New(cors.Config{
+		AllowOrigins: allowedOrigins,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	v1 := g.Group("/api/v1")
 	{

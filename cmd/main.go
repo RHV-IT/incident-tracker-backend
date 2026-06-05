@@ -15,6 +15,7 @@ type application struct {
 	jwtsecret string
 	db *pgxpool.Pool
 	models db.Models
+	origins string
 }
 
 func main() {
@@ -29,6 +30,7 @@ func main() {
 		jwtsecret: env.GetEnvString("jwtSecret", "someSecret"),
 		db: pool,
 		models: models,
+		origins: env.GetEnvString("allowedOrigins", "http://localhost:3000"),
 	}
 	app.serve()
 	
