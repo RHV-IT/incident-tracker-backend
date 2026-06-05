@@ -68,12 +68,10 @@ Components:
 - Serialize responses to JSON
 - Handle errors and return appropriate HTTP status codes
 
-### Middleware (`middleware.go`)
-- Extract and validate JWT tokens from Authorization headers
-- Verify token signature and expiration
-- Extract user claims (ID, role, email, department)
-- Set user context in Gin context for handlers to access
-- Return 401 Unauthorized for invalid/missing tokens
+### Middleware
+The application uses two middlewares:
+- **CORS Middleware**: Configured in `routes.go`, sets up Cross-Origin Resource Sharing.
+- **JWT Middleware** (`middleware.go`): Extracts and validates JWT tokens from Authorization headers, verifies token signature and expiration, extracts user claims (ID, role, email, department), sets user context in Gin context for handlers to access, and returns 401 Unauthorized for invalid/missing tokens.
 
 ### Database Models (`/internal/db/`)
 - Define structs that map to database tables

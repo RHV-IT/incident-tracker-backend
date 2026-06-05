@@ -38,6 +38,7 @@ The Issue Tracker is a web application designed to help organizations track and 
 - **Authentication**: JWT (JSON Web Tokens) with bcrypt password hashing
 - **Development Tools**: Air (live reload), Docker Compose
 - **API Testing**: Built-in endpoint testing capabilities
+- **CORS**: gin-contrib/cors middleware for Cross-Origin Resource Sharing
 
 ## Getting Started
 
@@ -90,6 +91,7 @@ The following environment variables are used:
 | `PORT` | The port on which the server runs | `3001` |
 | `dbConnStr` | PostgreSQL connection string | `postgres://tracker_user:tracker_password@localhost:5432/issuetracker` |
 | `jwtSecret` | Secret key for JWT token signing | `someSecret` |
+| `allowedOrigins` | Comma-separated list of allowed origins for CORS (e.g., http://localhost:3000,http://192.168.9.227:3000) | `http://localhost:3000,http://192.168.9.227:3000` |
 
 These can be set in a `.env` file or exported in the shell.
 
@@ -219,6 +221,17 @@ All user management endpoints require superadmin role and authentication middlew
   - **Responses**:
     - `200 OK`: Incident successfully recorded
     - `400 Bad Request`: Invalid input data or invalid severity level
+    - `401 Unauthorized`: Missing or invalid authentication token
+    - `500 Internal Server Error`: Database error
+
+#### Get Incidents
+- `GET /incidents` - Retrieve paginated list of incidents
+  - **Requires**: Authentication (any authenticated user)
+  - **Query Parameters**:
+    - `page`: Page number (default: 1)
+    - `limit`: Number of items per page (default: 10, max: 50)
+  - **Responses**:
+    - `200 OK`: Paginated list of incidents
     - `401 Unauthorized`: Missing or invalid authentication token
     - `500 Internal Server Error`: Database error
 

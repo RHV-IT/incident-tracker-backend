@@ -109,12 +109,12 @@ If you need to modify the database schema:
 ### Adding New Endpoints
 
 When adding new API endpoints:
-1. Define the handler function in the appropriate file under `/cmd/`
-2. Add the route to `routes.js` in the appropriate group
-3. Apply middleware as needed (`authMiddleware()` for protected routes)
-4. Define request/response types in `types.go` if needed
-5. Update the README with documentation for the new endpoint
-6. Add appropriate validation and error handling
+  1. Define the handler function in the appropriate file under `/cmd/`
+  2. Add the route to `routes.go` in the appropriate group
+  3. Apply middleware as needed (`authMiddleware()` for protected routes)
+  4. Define request/response types in `types.go` if needed
+  5. Update the README with documentation for the new endpoint
+  6. Add appropriate validation and error handling
 
 ### Security Considerations
 
