@@ -60,6 +60,25 @@ func(a *application) getIncidents(c *gin.Context) {
 	}
 	offset := (page - 1) * limit
 	context := c.Request.Context() 
+	userRole := c.GetString("userRole")
+	if userRole == "supervisor" {
+		userDepartment := c.GetString("userDepartment")
+		incidents, totalPages, totalItems, err := a.models.Incidents.FetchBySupervisor(context, limit, offset, userDepartment)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to execute database query"})
+			return
+		}
+		c.JSON(http.StatusOK, PaginatedIncidentResponse{
+			Data: incidents,
+			Pagination: PaginationMeta{
+				CurrentPage: page,
+				PageSize: limit,
+				TotalItems: totalItems,
+				TotalPages: totalPages,
+			},
+		})
+		return
+	}
 	incidents, totalPages, totalItems, err := a.models.Incidents.FetchIncidents(context, limit, offset)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to execute database query"})
