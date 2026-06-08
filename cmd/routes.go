@@ -20,7 +20,7 @@ func (a *application) routes() http.Handler {
 	}
 
 	g.Use(cors.New(cors.Config{
-		AllowOrigins: allowedOrigins,
+		AllowOrigins:     allowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -41,7 +41,7 @@ func (a *application) routes() http.Handler {
 			authGroup.POST("/login", a.login)
 			authGroup.PUT("/update", a.authMiddleware(), a.update)
 			authGroup.PUT("/disable", a.authMiddleware(), a.disable)
-			authGroup.PUT("/enable",  a.authMiddleware(), a.enable)
+			authGroup.PUT("/enable", a.authMiddleware(), a.enable)
 			authGroup.PUT("/resetpassword", a.authMiddleware(), a.resetPassword)
 		}
 		v1.POST("/incidents", a.reportIncident)
@@ -49,5 +49,5 @@ func (a *application) routes() http.Handler {
 		v1.GET("/user", a.authMiddleware(), a.getUser)
 	}
 
-	return  g
+	return g
 }

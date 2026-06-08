@@ -5,13 +5,12 @@ import (
 	"strconv"
 )
 
-
 func GetEnvString(key string, defaultValue string) string {
 	value, exists := os.LookupEnv(key)
 	if exists {
 		return value
 	}
-	return  defaultValue
+	return defaultValue
 }
 
 func GetEnvInt(key string, defaultValue int) int {

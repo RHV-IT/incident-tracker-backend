@@ -16,54 +16,54 @@ type SeverityLevel string
 
 const (
 	NearMiss SeverityLevel = "near miss"
-	Minor SeverityLevel = "minor"
-	Major SeverityLevel = "major"
+	Minor    SeverityLevel = "minor"
+	Major    SeverityLevel = "major"
 	Critical SeverityLevel = "critical"
 )
 
 func (s SeverityLevel) IsValid() bool {
-	switch s{
-		case NearMiss, Minor, Major, Critical:
-			return true
+	switch s {
+	case NearMiss, Minor, Major, Critical:
+		return true
 	}
-	return  false
+	return false
 }
 
 type Incident struct {
-	Id int `json:"id"`
-	ReporterName string `json:"reporterName"`
-	Department string `json:"department"`
-	Position string `json:"position"`
-	ContactInfo string `json:"contactInfo"`
-	DateOfIncident string `json:"dateOfIncident"`
-	TimeOfIncident string `json:"timeOfIncident"`
-	LocationOfIncident string `json:"locationOfIncident"`
-	TypeOfIncident string `json:"typeOfIncident"`
-	PeopleInvolved string `json:"peopleInvolved"`
-	DescriptionOfIncident string `json:"descriptionOfIncident"`
-	ImmediateActionTaken string `json:"immediateActionTaken"`
-	InjuryOrDamage string `json:"injuryOrDamage"` 
-	SeverityLevel SeverityLevel `json:"severityLevel"`
-	SupervisorNotified string `json:"supervisorNotified"`
-	RecommendedPreventiveAction string `json:"recommendedPreventiveAction"` 
+	Id                          int           `json:"id"`
+	ReporterName                string        `json:"reporterName"`
+	Department                  string        `json:"department"`
+	Position                    string        `json:"position"`
+	ContactInfo                 string        `json:"contactInfo"`
+	DateOfIncident              string        `json:"dateOfIncident"`
+	TimeOfIncident              string        `json:"timeOfIncident"`
+	LocationOfIncident          string        `json:"locationOfIncident"`
+	TypeOfIncident              string        `json:"typeOfIncident"`
+	PeopleInvolved              string        `json:"peopleInvolved"`
+	DescriptionOfIncident       string        `json:"descriptionOfIncident"`
+	ImmediateActionTaken        string        `json:"immediateActionTaken"`
+	InjuryOrDamage              string        `json:"injuryOrDamage"`
+	SeverityLevel               SeverityLevel `json:"severityLevel"`
+	SupervisorNotified          string        `json:"supervisorNotified"`
+	RecommendedPreventiveAction string        `json:"recommendedPreventiveAction"`
 }
 
 type IncidentReport struct {
-	ReporterName string `json:"reporterName"`
-	Department string `json:"department"`
-	Position string `json:"position"`
-	ContactInfo string `json:"contactInfo"`
-	DateOfIncident string `json:"dateOfIncident"`
-	TimeOfIncident string `json:"timeOfIncident"`
-	LocationOfIncident string `json:"locationOfIncident"`
-	TypeOfIncident string `json:"typeOfIncident"`
-	PeopleInvolved string `json:"peopleInvolved"`
-	DescriptionOfIncident string `json:"descriptionOfIncident"`
-	ImmediateActionTaken string `json:"immediateActionTaken"`
-	InjuryOrDamage string `json:"injuryOrDamage"` 
-	SeverityLevel SeverityLevel `json:"severityLevel"`
-	SupervisorNotified string `json:"supervisorNotified"`
-	RecommendedPreventiveAction string `json:"recommendedPreventiveAction"`
+	ReporterName                string        `json:"reporterName"`
+	Department                  string        `json:"department"`
+	Position                    string        `json:"position"`
+	ContactInfo                 string        `json:"contactInfo"`
+	DateOfIncident              string        `json:"dateOfIncident"`
+	TimeOfIncident              string        `json:"timeOfIncident"`
+	LocationOfIncident          string        `json:"locationOfIncident"`
+	TypeOfIncident              string        `json:"typeOfIncident"`
+	PeopleInvolved              string        `json:"peopleInvolved"`
+	DescriptionOfIncident       string        `json:"descriptionOfIncident"`
+	ImmediateActionTaken        string        `json:"immediateActionTaken"`
+	InjuryOrDamage              string        `json:"injuryOrDamage"`
+	SeverityLevel               SeverityLevel `json:"severityLevel"`
+	SupervisorNotified          string        `json:"supervisorNotified"`
+	RecommendedPreventiveAction string        `json:"recommendedPreventiveAction"`
 }
 
 func (m *IncidentsModel) Insert(ctx context.Context, incident *Incident) (*Incident, error) {
@@ -130,7 +130,7 @@ func (m *IncidentsModel) Insert(ctx context.Context, incident *Incident) (*Incid
 	return incident, nil
 }
 
-func(m *IncidentsModel) FetchIncidents(ctx context.Context, limit, offset int) ([]IncidentReport, int, int, error) {
+func (m *IncidentsModel) FetchIncidents(ctx context.Context, limit, offset int) ([]IncidentReport, int, int, error) {
 	var totalItems int
 	err := m.DB.QueryRow(ctx, "SELECT COUNT(*) FROM incidents").Scan(&totalItems)
 	if err != nil {
@@ -174,9 +174,9 @@ func(m *IncidentsModel) FetchIncidents(ctx context.Context, limit, offset int) (
 	return incidents, totalPages, totalItems, nil
 }
 
-func(m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset int, department string) ([]IncidentReport, int, int, error) {
+func (m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset int, department string) ([]IncidentReport, int, int, error) {
 	var totalItems int
-countQuery := `
+	countQuery := `
 		SELECT COUNT(*) 
 		FROM incidents 
 		WHERE LOWER(TRIM(department)) = LOWER(TRIM($1))
@@ -185,7 +185,7 @@ countQuery := `
 	if err != nil {
 		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
 	}
-query := `
+	query := `
 		SELECT 
 			reporter_name, 
 			department, 

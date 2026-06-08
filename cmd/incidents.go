@@ -8,14 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func(a *application) reportIncident(c *gin.Context) {
+func (a *application) reportIncident(c *gin.Context) {
 	context := c.Request.Context()
 	var input db.IncidentReport
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 
 	if !input.SeverityLevel.IsValid() {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid severity level provided"})
@@ -48,7 +47,7 @@ func(a *application) reportIncident(c *gin.Context) {
 	c.JSON(http.StatusOK, savedIncident)
 }
 
-func(a *application) getIncidents(c *gin.Context) {
+func (a *application) getIncidents(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 
@@ -59,7 +58,7 @@ func(a *application) getIncidents(c *gin.Context) {
 		limit = 10
 	}
 	offset := (page - 1) * limit
-	context := c.Request.Context() 
+	context := c.Request.Context()
 	userRole := c.GetString("userRole")
 	if userRole == "supervisor" {
 		userDepartment := c.GetString("userDepartment")
@@ -72,9 +71,9 @@ func(a *application) getIncidents(c *gin.Context) {
 			Data: incidents,
 			Pagination: PaginationMeta{
 				CurrentPage: page,
-				PageSize: limit,
-				TotalItems: totalItems,
-				TotalPages: totalPages,
+				PageSize:    limit,
+				TotalItems:  totalItems,
+				TotalPages:  totalPages,
 			},
 		})
 		return
@@ -88,9 +87,9 @@ func(a *application) getIncidents(c *gin.Context) {
 		Data: incidents,
 		Pagination: PaginationMeta{
 			CurrentPage: page,
-			PageSize: limit,
-			TotalItems: totalItems,
-			TotalPages: totalPages,
+			PageSize:    limit,
+			TotalItems:  totalItems,
+			TotalPages:  totalPages,
 		},
 	})
 }

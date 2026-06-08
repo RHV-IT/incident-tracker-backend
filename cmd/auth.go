@@ -10,9 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-
-
-func(a *application) register(c *gin.Context) {
+func (a *application) register(c *gin.Context) {
 	userRole := c.GetString("userRole")
 	if userRole != "superadmin" {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized. Must be a superadmin"})
@@ -56,10 +54,10 @@ func(a *application) register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, newUser)
-	
+
 }
 
-func(a *application) login(c *gin.Context) {
+func (a *application) login(c *gin.Context) {
 	context := c.Request.Context()
 	var user loginRequest
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -87,13 +85,13 @@ func(a *application) login(c *gin.Context) {
 		return
 	}
 	claims := &Claims{
-		UserId: existingUser.Id,
-		Role: existingUser.Role,
-		Email: existingUser.Email,
+		UserId:     existingUser.Id,
+		Role:       existingUser.Role,
+		Email:      existingUser.Email,
 		Department: existingUser.Department,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(72 * time.Hour)),
-			IssuedAt: jwt.NewNumericDate(time.Now()),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -107,7 +105,7 @@ func(a *application) login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": tokenString, "user": existingUser})
 }
 
-func(a *application) resetPassword(c *gin.Context) {
+func (a *application) resetPassword(c *gin.Context) {
 	context := c.Request.Context()
 	userRole := c.GetString("userRole")
 	if userRole != "superadmin" {
