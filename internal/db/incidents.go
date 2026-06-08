@@ -176,39 +176,36 @@ func(m *IncidentsModel) FetchIncidents(ctx context.Context, limit, offset int) (
 
 func(m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset int, department string) ([]IncidentReport, int, int, error) {
 	var totalItems int
-	countQuery := `
-SELECT COUNT(*) 
-FROM incidents i
-JOIN users u ON i.reporterName = u.name 
-WHERE u.role = 'supervisor' 
-  AND u.department = $1`
+countQuery := `
+		SELECT COUNT(*) 
+		FROM incidents 
+		WHERE LOWER(TRIM(department)) = LOWER(TRIM($1))
+	`
 	err := m.DB.QueryRow(ctx, countQuery, department).Scan(&totalItems)
 	if err != nil {
 		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
 	}
-	query := `
-	SELECT 
-    i.reporter_name, 
-    i.department, 
-    i.position, 
-    i.contact_info, 
-    i.date_of_incident, 
-    i.time_of_incident, 
-    i.location_of_incident, 
-    i.type_of_incident, 
-    i.people_involved, 
-    i.description_of_incident, 
-    i.immediate_action_taken, 
-    i.injury_or_damage, 
-    i.severity_level, 
-    i.supervisor_notified, 
-    i.recommended_preventive_action 
-FROM incidents i
-INNER JOIN users u ON i.reporter_name = u.name 
-WHERE u.role = 'supervisor' 
-  AND u.department = $1
-ORDER BY i.id DESC 
-LIMIT $2 OFFSET $3	
+query := `
+		SELECT 
+			reporter_name, 
+			department, 
+			position, 
+			contact_info, 
+			date_of_incident, 
+			time_of_incident, 
+			location_of_incident, 
+			type_of_incident, 
+			people_involved, 
+			description_of_incident, 
+			immediate_action_taken, 
+			injury_or_damage, 
+			severity_level, 
+			supervisor_notified, 
+			recommended_preventive_action 
+		FROM incidents 
+		WHERE LOWER(TRIM(department)) = LOWER(TRIM($1))
+		ORDER BY id DESC 
+		LIMIT $2 OFFSET $3	
 	`
 	rows, err := m.DB.Query(ctx, query, department, limit, offset)
 	if err != nil {
