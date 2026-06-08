@@ -32,7 +32,7 @@ The Issue Tracker is a web application designed to help organizations track and 
 
 ## Technology Stack
 
-- **Language**: Go 1.22+ (as per go.mod)
+- **Language**: Go 1.26.3
 - **Web Framework**: Gin-Gonic
 - **Database**: PostgreSQL with PGX driver
 - **Authentication**: JWT (JSON Web Tokens) with bcrypt password hashing
@@ -45,7 +45,7 @@ The Issue Tracker is a web application designed to help organizations track and 
 ### Prerequisites
 
 - Docker and Docker Compose (for containerized setup)
-- Go 1.22+ (if running locally)
+- Go 1.26.3 (if running locally)
 - Git (for version control)
 
 ### Running with Docker Compose (Recommended)
@@ -58,8 +58,11 @@ The Issue Tracker is a web application designed to help organizations track and 
 
 2. Configure environment variables
    ```bash
-   cp .env.example .env   # If .env.example exists
-   # Or create .env based on the variables below
+   # Create .env file with the following variables:
+   dbConnStr=postgres://tracker_user:tracker_password@localhost:5432/issuetracker
+   PORT=3001
+   jwtSecret=your-secret-key
+   allowedOrigins=http://localhost:3000,http://192.168.9.227:3000
    ```
 
 3. Start the PostgreSQL database
@@ -158,7 +161,6 @@ All authentication endpoints require appropriate roles and are protected by auth
         }
       }
       ```
-    - `400 Bad Request`: Invalid input data
     - `401 Unauthorized`: Invalid credentials
     - `404 Not Found`: User not found
     - `500 Internal Server Error`: Database error
@@ -290,20 +292,21 @@ Stores incident reports:
 ├── cmd/                   # Application entrypoint and handlers
 │   ├── auth.go            # Authentication handlers (register, login)
 │   ├── incidents.go       # Incident reporting handlers
-│   ├── main.go            # Application initialization and server startup
+│   ├── main.go            # Application initialization
 │   ├── middleware.go      # Authentication middleware (JWT validation)
 │   ├── routes.go          # API route definitions
 │   ├── server.go          # HTTP server configuration
 │   ├── types.go           # Request/response structs and type definitions
-│   ├── users.go           # User management handlers (update, disable, enable)
-│   └── utils.go           # Utility functions (password hashing, etc.)
+│   ├── utils.go           # Utility functions (password hashing)
+│   └── users.go           # User management handlers (update, disable, enable)
 │
 ├── internal/              # Private application libraries
 │   ├── db/                # Database models and connection handling
 │   │   ├── db.go          # Database connection pool initialization
-│   │   ├── incidents.go   - Incident database model
-│   │   └── users.go       - User database model
-│   └── env/               - Environment variable helpers
+│   │   ├── incidents.go   # Incident database model
+│   │   └── users.go       # User database model
+│   └── env/               # Environment variable helpers
+│       └── env.go
 │
 └── tmp/                   # Temporary directory (used by Air for builds)
 ```
