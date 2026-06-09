@@ -2,6 +2,8 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: issuetracker_db
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: tracker_user
       POSTGRES_PASSWORD: tracker_password

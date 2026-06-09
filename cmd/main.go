@@ -24,7 +24,7 @@ func main() {
 	defer pool.Close()
 	models := db.NewModels(pool)
 	app := &application{
-		port:      env.GetEnvInt("PORT", 3002),
+		port:      env.GetEnvInt("PORT", 3001),
 		jwtsecret: env.GetEnvString("jwtSecret", "someSecret"),
 		db:        pool,
 		models:    models,
