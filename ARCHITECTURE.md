@@ -16,7 +16,7 @@ Components:
 - **HTTP Handlers**: Process requests and return responses:
   - `auth.go`: Authentication endpoints (register, login, reset password)
   - `users.go`: User management endpoints (update, disable, enable, get user)
-  - `incidents.go`: Incident reporting endpoints
+  - `incidents.go`: Incident reporting endpoints (public report, authenticated list)
   - `main.go`: Application entrypoint
   - `server.go`: HTTP server configuration
   - `types.go`: Request/response structs and type definitions
@@ -130,10 +130,11 @@ HTTP Request → Gin Router → Middleware (if applicable) → Handler → Valid
 - Secret key stored in environment variable
 
 ### 4. Role-Based Access Control (RBAC)
-- Four predefined roles with hierarchical permissions
+- Four predefined roles with permissions
 - Role checking performed in handlers after authentication
 - Superadmin has highest privileges (user management)
-- Regular users can only report incidents
+- Incident reporting endpoint is public (no authentication required)
+- Incident listing requires authentication
 
 ### 5. Environment-Based Configuration
 - Configuration via environment variables

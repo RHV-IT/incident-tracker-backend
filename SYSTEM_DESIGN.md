@@ -41,7 +41,7 @@ The Issue Tracker is a stateless RESTful API built with Go that provides inciden
 │  │  │                     Route Groups                            │    │   │
 │  │  │  /api/v1/ping          → Health Check Handler             │    │   │
 │  │  │  /api/v1/auth/*        → Auth Handlers (register, login, reset pwd)  │    │   │
-│  │  │  /api/v1/incidents     → Incident Handlers                │    │   │
+│  │  │  /api/v1/incidents     → Incident Handlers (public)       │    │   │
 │  │  │  /api/v1/user          → User Handlers (get user)         │    │   │
 │  │  └─────────────────────────────────────────────────────────────┘    │   │
 │  │                              │                                        │   │
@@ -339,9 +339,9 @@ Client Request
 | Role | Permissions |
 |------|-------------|
 | **superadmin** | User management (register, update, disable/enable, reset password), incident reporting, view all incidents, get user info |
-| **admin** | Incident reporting, view department incidents |
-| **supervisor** | Incident reporting, view own department incidents |
-| **reporter** | Incident reporting only |
+| **admin** | Report incidents, view department incidents |
+| **supervisor** | Report incidents, view own department incidents |
+| **reporter** | Report incidents via public endpoint only |
 
 ## Deployment Architecture
 

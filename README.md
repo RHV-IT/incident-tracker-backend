@@ -45,7 +45,7 @@ The Issue Tracker is a web application designed to help organizations track and 
 ### Prerequisites
 
 - Docker and Docker Compose (for containerized setup)
-- Go 1.26.3 (if running locally)
+- Go 1.26.3 (if running locally without Docker)
 - Git (for version control)
 
 ### Running with Docker Compose (Recommended)
@@ -56,14 +56,40 @@ The Issue Tracker is a web application designed to help organizations track and 
    cd issueTracking
    ```
 
-2. Start all services (PostgreSQL and server)
+2. Configure environment variables (optional, defaults are provided):
+   ```bash
+   # Or set environment variables directly
+   export jwtSecret=your-secret-key
+   export allowedOrigins="http://localhost:3000"
+   ```
+
+3. Start all services (PostgreSQL and server)
    ```bash
    docker compose up -d
    ```
 
-3. The server will be available at `http://localhost:3002`
+4. The server will be available at `http://localhost:3002`
    - Database tables are automatically created on first run
    - Server waits for PostgreSQL to be healthy before starting
+
+### Running Locally
+
+```bash
+# Install dependencies
+go mod download
+
+# Set environment variables (optional)
+export PORT=3002
+export jwtSecret=your-secret-key
+export allowedOrigins="http://localhost:3000"
+export dbConnStr="postgres://tracker_user:tracker_password@localhost:5432/issuetracker"
+
+# Run with live reload
+air
+
+# Or run directly
+go run ./cmd/main.go
+```
 
 ### Environment Variables
 
@@ -76,7 +102,9 @@ The following environment variables are used:
 | `jwtSecret` | Secret key for JWT token signing | `someSecret` |
 | `allowedOrigins` | Comma-separated list of allowed origins for CORS | `http://localhost:3000,http://192.168.9.227:3000` |
 
-These can be set in the `docker-compose.yml` environment section or exported in the shell.
+These can be set in the `docker-compose.yml` environment section, exported in the shell, or via an `.env` file.
+
+> **Note**: For production, change the default `jwtSecret` to a strong, unique value.
 
 ### Helper Scripts
 
@@ -206,7 +234,7 @@ All user management endpoints require superadmin role and authentication middlew
 
 #### Report Incident
 - `POST /incidents` - Submit a new incident report
-  - **Requires**: Authentication (any authenticated user)
+  - **Requires**: No authentication required (anyone can report)
   - **Request Body**:
     ```json
     {
@@ -230,12 +258,12 @@ All user management endpoints require superadmin role and authentication middlew
   - **Responses**:
     - `200 OK`: Incident successfully recorded
     - `400 Bad Request`: Invalid input data or invalid severity level
-    - `401 Unauthorized`: Missing or invalid authentication token
     - `500 Internal Server Error`: Database error
 
 #### Get Incidents
 - `GET /incidents` - Retrieve paginated list of incidents
   - **Requires**: Authentication (any authenticated user)
+  - **Role-specific behavior**: Supervisors only see incidents from their department
   - **Query Parameters**:
     - `page`: Page number (default: 1)
     - `limit`: Number of items per page (default: 10, max: 50)
