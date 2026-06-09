@@ -56,34 +56,14 @@ The Issue Tracker is a web application designed to help organizations track and 
    cd issueTracking
    ```
 
-2. Configure environment variables
+2. Start all services (PostgreSQL and server)
    ```bash
-   # Create .env file with the following variables:
-   dbConnStr=postgres://tracker_user:tracker_password@localhost:5432/issuetracker
-   PORT=3001
-   jwtSecret=your-secret-key
-   allowedOrigins=http://localhost:3000,http://192.168.9.227:3000
+   docker compose up -d
    ```
 
-3. Start the PostgreSQL database
-   ```bash
-   docker-compose up -d
-   ```
-
-4. Create database tables
-   ```bash
-   ./createtables.sh
-   ```
-
-5. Start the application
-   ```bash
-   go run ./cmd/main.go
-   ```
-   
-   Alternatively, for live development with hot reload:
-   ```bash
-   air
-   ```
+3. The server will be available at `http://localhost:3002`
+   - Database tables are automatically created on first run
+   - Server waits for PostgreSQL to be healthy before starting
 
 ### Environment Variables
 
@@ -91,16 +71,15 @@ The following environment variables are used:
 
 | Variable | Description | Default Value |
 |----------|-------------|---------------|
-| `PORT` | The port on which the server runs | `3001` |
-| `dbConnStr` | PostgreSQL connection string | `postgres://tracker_user:tracker_password@localhost:5432/issuetracker` |
+| `PORT` | The port on which the server runs | `3002` |
+| `dbConnStr` | PostgreSQL connection string (use `postgres` hostname in Docker) | `postgres://tracker_user:tracker_password@postgres:5432/issuetracker` |
 | `jwtSecret` | Secret key for JWT token signing | `someSecret` |
-| `allowedOrigins` | Comma-separated list of allowed origins for CORS (e.g., http://localhost:3000,http://192.168.9.227:3000) | `http://localhost:3000,http://192.168.9.227:3000` |
+| `allowedOrigins` | Comma-separated list of allowed origins for CORS | `http://localhost:3000,http://192.168.9.227:3000` |
 
-These can be set in a `.env` file or exported in the shell.
+These can be set in the `docker-compose.yml` environment section or exported in the shell.
 
 ### Helper Scripts
 
-- `./createtables.sh` - Creates necessary database tables by executing tables.sql against the PostgreSQL database
 - `./login.sh` - Opens an interactive psql shell to the PostgreSQL container for direct database access
 - `./commit.sh` - Helper script that stages all changes, prompts for a commit message, commits, and pushes to remote
 
@@ -311,8 +290,7 @@ Stores incident reports:
 ├── .air.toml              # Air configuration for live reloading
 ├── .gitignore             # Git ignore rules
 ├── commit.sh              # Helper script for git operations
-├── createtables.sh        # Script to initialize database tables
-├── docker-compose.yml     # PostgreSQL service definition
+├── docker-compose.yml     # PostgreSQL and server service definitions
 ├── login.sh               # Script to access database shell
 ├── README.md              # This file
 ├── tables.sql             # Database schema definition
@@ -383,7 +361,7 @@ HTTP status codes are used appropriately:
 1. Modify `tables.sql` with schema changes
 2. Update corresponding model in `internal/db/`
 3. Update handler functions in `cmd/` to use new fields
-4. Run `./createtables.sh` to apply changes (in development)
+4. Rebuild and restart containers to apply changes
 
 ### Configuration Changes
 - Update `.env` file for environment-specific settings

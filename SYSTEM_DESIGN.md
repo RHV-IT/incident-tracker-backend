@@ -126,9 +126,13 @@ The Issue Tracker is a stateless RESTful API built with Go that provides inciden
 │                                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────┐   │
 │  │  Scripts                                                             │   │
-│  │  - createtables.sh  → Initialize DB schema                          │   │
-│  │  - login.sh         → Access DB shell                               │   │
 │  │  - commit.sh        → Git helper                                    │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Database Initialization                                             │   │
+│  │  - tables.sql → Auto-run via Docker initdb mechanism               │   │
+│  │  - Schema created on first container start                        │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -292,7 +296,10 @@ Client Request
 ### 4. Infrastructure Layer
 - **Database**: PostgreSQL with connection pooling
 - **Configuration**: Environment variables
-- **Deployment**: Docker Compose
+- **Deployment**: Docker Compose (PostgreSQL + Server containers)
+- **Scripts**:
+  - `login.sh` → Access DB shell
+  - `commit.sh` → Git helper
 
 ## Security Architecture
 
@@ -346,18 +353,19 @@ Client Request
 │                                                         │
 │  Local Machine                                         │
 │  ┌─────────────────────────────────────────────────┐   │
-│  │  Go Application                                 │   │
-│  │  - Running via `go run ./cmd/main.go`           │   │
-│  │  - Hot reload via Air                           │   │
-│  └─────────────────────┬───────────────────────────┘   │
-│                        │                                 │
-│  ┌─────────────────────▼───────────────────────────┐   │
-│  │  Docker Container                                 │   │
+│  │  Docker Compose                                 │   │
 │  │  ┌─────────────────────────────────────────┐    │   │
 │  │  │  PostgreSQL:16-alpine                     │    │   │
 │  │  │  - Volume: pgdata                         │    │   │
+│  │  │  - Init: tables.sql auto-executed         │    │   │
 │  │  │  - Port: 5432                             │    │   │
-│  │  └─────────────────────────────────────────┘    │   │
+│  │  └─────────────────────┬───────────────────┘    │   │
+│  │                        │                          │
+│  │  ┌─────────────────────▼───────────────────┐   │
+│  │  │  Go Application (built from Dockerfile) │   │
+│  │  │  - Port: 3002                           │   │
+│  │  │  - Hot reload via Air                   │   │
+│  │  └─────────────────────────────────────────┘   │   │
 │  └─────────────────────────────────────────────────┘   │
 │                                                         │
 └─────────────────────────────────────────────────────────┘

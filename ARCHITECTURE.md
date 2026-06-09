@@ -56,7 +56,6 @@ Components:
   - `tables.sql`: Database schema definition
 - **Scripts**:
   - `commit.sh`: Git operations helper
-  - `createtables.sh`: Database initialization
   - `login.sh`: Database access helper
 
 ## Component Responsibilities
@@ -198,10 +197,10 @@ HTTP Request → Gin Router → Middleware (if applicable) → Handler → Valid
 ### Development Environment
 ```
 Developer Machine
-├── Go Application (running locally or in container)
-├── Air (file watcher for live reload)
-├── Docker Container
-│   └── PostgreSQL:16-alpine
+├── Docker Compose
+│   ├── Go Application Container (built from Dockerfile)
+│   ├── Air (live reload enabled)
+│   └── PostgreSQL:16-alpine (with initdb for schema)
 └── Local filesystem (for code)
 ```
 

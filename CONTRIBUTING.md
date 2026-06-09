@@ -24,19 +24,18 @@ There are many ways to contribute to this project:
    ```
 
 3. Set up the development environment:
-   ```bash
-   # Install dependencies (if any beyond standard library)
-   go mod download
-   
-   # Set up the database
-   docker-compose up -d
-   ./createtables.sh
-   
-   # Run the application
-   go run ./cmd/main.go
-   # Or for live reload:
-   air
-   ```
+    ```bash
+    # Install dependencies (if any beyond standard library)
+    go mod download
+    
+    # Set up the database (tables are auto-created with Docker)
+    docker compose up -d
+    
+    # Run the application
+    go run ./cmd/main.go
+    # Or for live reload:
+    air
+    ```
 
 ### Making Changes
 
@@ -103,8 +102,7 @@ If you need to modify the database schema:
 1. Update `tables.sql` with the new schema
 2. Update the corresponding model in `/internal/db/`
 3. Update any handlers that use the changed schema
-4. Test with a fresh database using `./createtables.sh`
-5. Note in your PR that database migrations are needed
+4. Test with a fresh database by removing the volume and restarting containers
 
 ### Adding New Endpoints
 
