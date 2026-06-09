@@ -6,10 +6,24 @@ services:
       POSTGRES_USER: tracker_user
       POSTGRES_PASSWORD: tracker_password
       POSTGRES_DB: issuetracker
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./tables.sql:/docker-entrypoint-initdb.d/tables.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tracker_user -d issuetracker"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build: .
+    ports:
+      - "3002:3002"
+    environment:
+      dbConnStr: "postgres://tracker_user:tracker_password@postgres:5432/issuetracker"
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   pgdata:

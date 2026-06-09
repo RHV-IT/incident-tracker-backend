@@ -16,8 +16,6 @@ FROM alpine:latest
 WORKDIR /app
 
 COPY --from=builder /app/issue-tracker .
-COPY --from=builder /app/tables.sql .
-COPY --from=builder /app/createtables.sh .
 
 EXPOSE 3002
 
