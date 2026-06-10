@@ -25,7 +25,7 @@ CREATE TABLE incidents (
     severity_level VARCHAR(50) NOT NULL,     
     supervisor_notified VARCHAR(255) NOT NULL,
     recommended_preventive_action TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'unresolved'
+    incident_status VARCHAR(50) NOT NULL DEFAULT 'unresolved'
 );
 
 INSERT INTO users (name, email, password, role, department) 
