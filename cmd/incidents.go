@@ -16,8 +16,13 @@ func (a *application) reportIncident(c *gin.Context) {
 		return
 	}
 
-	if !input.SeverityLevel.IsValid() && !input.IncidentStatus.IsValid() {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid severity level or incident status provided"})
+	if !input.SeverityLevel.IsValid() {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid severity level provided"})
+		return
+	}
+
+	if !input.IncidentStatus.IsValid() {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid incident status provided"})
 		return
 	}
 
