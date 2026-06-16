@@ -25,10 +25,10 @@ There are many ways to contribute to this project:
 
 3. Set up the development environment:
     ```bash
-    # Install dependencies (if any beyond standard library)
+    # Install dependencies
     go mod download
     
-    # Set up the database (tables are auto-created with Docker)
+    # Set up the database (tables are loaded from tables.sql)
     docker compose up -d
     
     # Run the application

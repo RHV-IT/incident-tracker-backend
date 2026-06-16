@@ -68,7 +68,7 @@ The Issue Tracker is a web application designed to help organizations track and 
    docker compose up -d
    ```
 
-4. The server will be available at `http://localhost:3002`
+4. The server will be available at `http://localhost:3001`
    - Database tables are automatically created on first run
    - Server waits for PostgreSQL to be healthy before starting
 
@@ -79,7 +79,7 @@ The Issue Tracker is a web application designed to help organizations track and 
 go mod download
 
 # Set environment variables (optional)
-export PORT=3002
+export PORT=3001
 export jwtSecret=your-secret-key
 export allowedOrigins="http://localhost:3000"
 export dbConnStr="postgres://tracker_user:tracker_password@localhost:5432/issuetracker"
@@ -97,7 +97,7 @@ The following environment variables are used:
 
 | Variable | Description | Default Value |
 |----------|-------------|---------------|
-| `PORT` | The port on which the server runs | `3002` |
+| `PORT` | The port on which the server runs | `3001` |
 | `dbConnStr` | PostgreSQL connection string (use `postgres` hostname in Docker) | `postgres://tracker_user:tracker_password@postgres:5432/issuetracker` |
 | `jwtSecret` | Secret key for JWT token signing | `someSecret` |
 | `allowedOrigins` | Comma-separated list of allowed origins for CORS | `http://localhost:3000,http://192.168.9.227:3000` |
@@ -252,12 +252,31 @@ All user management endpoints require superadmin role and authentication middlew
       "injuryOrDamage": "string (required)",
       "severityLevel": "string (required, one of: near miss, minor, major, critical)",
       "supervisorNotified": "string (required)",
-      "recommendedPreventiveAction": "string (required)"
+      "recommendedPreventiveAction": "string (required)",
+      "incidentStatus": "string (optional, one of: unresolved, inprogress, resolved, defaults to unresolved)"
     }
     ```
   - **Responses**:
     - `200 OK`: Incident successfully recorded
     - `400 Bad Request`: Invalid input data or invalid severity level
+    - `500 Internal Server Error`: Database error
+
+#### Update Incident Status
+- `PATCH /incidents/:id/status` - Update incident status
+  - **Requires**: Authentication (any authenticated user)
+  - **Path Parameters**:
+    - `id`: Incident ID (required)
+  - **Request Body**:
+    ```json
+    {
+      "status": "string (required, one of: unresolved, inprogress, resolved)"
+    }
+    ```
+  - **Responses**:
+    - `200 OK`: Status updated successfully
+    - `400 Bad Request`: Invalid status value
+    - `401 Unauthorized`: Missing or invalid authentication token
+    - `404 Not Found`: Incident not found
     - `500 Internal Server Error`: Database error
 
 #### Get Incidents
@@ -310,6 +329,7 @@ Stores incident reports:
 | severity_level | VARCHAR(50) | NOT NULL | Severity level (near miss, minor, major, critical) |
 | supervisor_notified | VARCHAR(255) | NOT NULL | Whether supervisor was notified |
 | recommended_preventive_action | TEXT | NOT NULL | Recommended actions to prevent recurrence |
+| incident_status | VARCHAR(50) | NOT NULL DEFAULT 'unresolved' | Current status (unresolved, inprogress, resolved) |
 
 ## Project Structure
 

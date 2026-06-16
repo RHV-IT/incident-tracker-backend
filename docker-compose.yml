@@ -20,9 +20,11 @@ services:
   server:
     build: .
     ports:
-      - "3002:3002"
+      - "3001:3001"
     environment:
       dbConnStr: "postgres://tracker_user:tracker_password@postgres:5432/issuetracker"
+      jwtSecret: "your-secret-key-change-in-production"
+      allowedOrigins: "http://localhost:3000"
     depends_on:
       postgres:
         condition: service_healthy

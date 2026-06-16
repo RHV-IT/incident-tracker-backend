@@ -42,7 +42,7 @@ func (a *application) reportIncident(c *gin.Context) {
 		SeverityLevel:               db.SeverityLevel(input.SeverityLevel),
 		SupervisorNotified:          input.SupervisorNotified,
 		RecommendedPreventiveAction: input.RecommendedPreventiveAction,
-		IncidentStatus: db.IncidentStatus(input.IncidentStatus),
+		IncidentStatus:              db.IncidentStatus(input.IncidentStatus),
 	}
 
 	savedIncident, err := a.models.Incidents.Insert(context, dbIncident)

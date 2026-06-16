@@ -50,27 +50,27 @@ docker compose logs -f
 
 ```bash
 # Health check
-curl http://localhost:3002/api/v1/ping
+curl http://localhost:3001/api/v1/ping
 
 # Login (save token)
-TOKEN=$(curl -s -X POST http://localhost:3002/api/v1/auth/login \
+TOKEN=$(curl -s -X POST http://localhost:3001/api/v1/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com","password":"yourpassword"}' | jq -r '.token')
 
 # Report incident (no auth required)
-curl -X POST http://localhost:3002/api/v1/incidents \
+curl -X POST http://localhost:3001/api/v1/incidents \
   -H "Content-Type: application/json" \
   -d '{"reporterName":"John","department":"IT","position":"Dev","contactInfo":"john@example.com","dateOfIncident":"2026-06-09","timeOfIncident":"14:00","locationOfIncident":"Office","typeOfIncident":"Slip","peopleInvolved":"None","descriptionOfIncident":"Test","immediateActionTaken":"Clean","injuryOrDamage":"None","severityLevel":"minor","supervisorNotified":"Yes","recommendedPreventiveAction":"None"}'
 
 # Get incidents
-curl http://localhost:3002/api/v1/incidents -H "Authorization: Bearer $TOKEN"
+curl http://localhost:3001/api/v1/incidents -H "Authorization: Bearer $TOKEN"
 ```
 
 ## Role Permissions
 
 | Role | Permissions |
 |------|-------------|
-| superadmin | All endpoints, user management |
+| superadmin | All endpoints, user management (register, update, disable, enable, reset password, get user) |
 | admin | Report incidents, view department incidents |
 | supervisor | Report incidents, view own department incidents |
 | reporter | Report incidents via public endpoint only |
@@ -79,4 +79,4 @@ curl http://localhost:3002/api/v1/incidents -H "Authorization: Bearer $TOKEN"
 
 A superadmin user is created by default:
 - Email: `admin@example.com`
-- Password: Check the database or reset via code
+- Password: The default password is hashed with bcrypt. Check the database or reset via code to set a known password.

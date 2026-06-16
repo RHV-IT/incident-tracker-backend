@@ -24,9 +24,9 @@ const (
 )
 
 const (
-	Resolved IncidentStatus = "resolved"
+	Resolved   IncidentStatus = "resolved"
 	InProgress IncidentStatus = "inprogress"
-	Unresolved IncidentStatus  = "unresolved"
+	Unresolved IncidentStatus = "unresolved"
 )
 
 func (s SeverityLevel) IsValid() bool {
@@ -39,50 +39,50 @@ func (s SeverityLevel) IsValid() bool {
 
 func (i IncidentStatus) IsValid() bool {
 	switch i {
-		case Resolved, InProgress, Unresolved:
-			return true
+	case Resolved, InProgress, Unresolved:
+		return true
 	}
 	return false
 }
 
 type Incident struct {
-	Id                          int           `json:"id"`
-	ReporterName                string        `json:"reporterName"`
-	Department                  string        `json:"department"`
-	Position                    string        `json:"position"`
-	ContactInfo                 string        `json:"contactInfo"`
-	DateOfIncident              string        `json:"dateOfIncident"`
-	TimeOfIncident              string        `json:"timeOfIncident"`
-	LocationOfIncident          string        `json:"locationOfIncident"`
-	TypeOfIncident              string        `json:"typeOfIncident"`
-	PeopleInvolved              string        `json:"peopleInvolved"`
-	DescriptionOfIncident       string        `json:"descriptionOfIncident"`
-	ImmediateActionTaken        string        `json:"immediateActionTaken"`
-	InjuryOrDamage              string        `json:"injuryOrDamage"`
-	SeverityLevel               SeverityLevel `json:"severityLevel"`
-	SupervisorNotified          string        `json:"supervisorNotified"`
-	RecommendedPreventiveAction string        `json:"recommendedPreventiveAction"`
+	Id                          int            `json:"id"`
+	ReporterName                string         `json:"reporterName"`
+	Department                  string         `json:"department"`
+	Position                    string         `json:"position"`
+	ContactInfo                 string         `json:"contactInfo"`
+	DateOfIncident              string         `json:"dateOfIncident"`
+	TimeOfIncident              string         `json:"timeOfIncident"`
+	LocationOfIncident          string         `json:"locationOfIncident"`
+	TypeOfIncident              string         `json:"typeOfIncident"`
+	PeopleInvolved              string         `json:"peopleInvolved"`
+	DescriptionOfIncident       string         `json:"descriptionOfIncident"`
+	ImmediateActionTaken        string         `json:"immediateActionTaken"`
+	InjuryOrDamage              string         `json:"injuryOrDamage"`
+	SeverityLevel               SeverityLevel  `json:"severityLevel"`
+	SupervisorNotified          string         `json:"supervisorNotified"`
+	RecommendedPreventiveAction string         `json:"recommendedPreventiveAction"`
 	IncidentStatus              IncidentStatus `json:"incidentStatus"`
 }
 
 type IncidentReport struct {
-	Id                          int           `json:"id"`
-	ReporterName                string        `json:"reporterName"`
-	Department                  string        `json:"department"`
-	Position                    string        `json:"position"`
-	ContactInfo                 string        `json:"contactInfo"`
-	DateOfIncident              string        `json:"dateOfIncident"`
-	TimeOfIncident              string        `json:"timeOfIncident"`
-	LocationOfIncident          string        `json:"locationOfIncident"`
-	TypeOfIncident              string        `json:"typeOfIncident"`
-	PeopleInvolved              string        `json:"peopleInvolved"`
-	DescriptionOfIncident       string        `json:"descriptionOfIncident"`
-	ImmediateActionTaken        string        `json:"immediateActionTaken"`
-	InjuryOrDamage              string        `json:"injuryOrDamage"`
-	SeverityLevel               SeverityLevel `json:"severityLevel"`
-	SupervisorNotified          string        `json:"supervisorNotified"`
-	RecommendedPreventiveAction string        `json:"recommendedPreventiveAction"`
-	IncidentStatus IncidentStatus `json:"incidentStatus"`
+	Id                          int            `json:"id"`
+	ReporterName                string         `json:"reporterName"`
+	Department                  string         `json:"department"`
+	Position                    string         `json:"position"`
+	ContactInfo                 string         `json:"contactInfo"`
+	DateOfIncident              string         `json:"dateOfIncident"`
+	TimeOfIncident              string         `json:"timeOfIncident"`
+	LocationOfIncident          string         `json:"locationOfIncident"`
+	TypeOfIncident              string         `json:"typeOfIncident"`
+	PeopleInvolved              string         `json:"peopleInvolved"`
+	DescriptionOfIncident       string         `json:"descriptionOfIncident"`
+	ImmediateActionTaken        string         `json:"immediateActionTaken"`
+	InjuryOrDamage              string         `json:"injuryOrDamage"`
+	SeverityLevel               SeverityLevel  `json:"severityLevel"`
+	SupervisorNotified          string         `json:"supervisorNotified"`
+	RecommendedPreventiveAction string         `json:"recommendedPreventiveAction"`
+	IncidentStatus              IncidentStatus `json:"incidentStatus"`
 }
 
 func (m *IncidentsModel) Insert(ctx context.Context, incident *Incident) (*Incident, error) {

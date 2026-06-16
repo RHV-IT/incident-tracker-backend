@@ -1,7 +1,7 @@
 # Incident Tracker Backend - Code Quality Assessment & Improvement Guide
 
 **Assessment Date:** June 9, 2026  
-**Repository:** Akene-Uzezi/incident-tracker-backend  
+**Repository:** issueTracking  
 **Language:** Go (98.2%)  
 **Overall Rating:** 6.5/10
 
