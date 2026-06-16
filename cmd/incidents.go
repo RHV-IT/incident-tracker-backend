@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"issueTracking/internal/db"
 	"net/http"
 	"strconv"
@@ -101,6 +102,19 @@ func (a *application) getIncidents(c *gin.Context) {
 }
 
 func (a *application) updateIncidentStatus(c *gin.Context) {
-	id := c.Param("id")
-	c.JSON(http.StatusOK, gin.H{"message": "This route is being worked on", "id": id})
+	context := c.Request.Context()
+	idParam := c.Param("id")
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter was passed"})
+		return
+	}
+	incident, err := a.models.Incidents.FetchById(context, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database query error"})
+		fmt.Printf("db query err %v", error.Error(err))
+		return
+	}
+	c.JSON(http.StatusOK, incident)
+
 }

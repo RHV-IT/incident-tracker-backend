@@ -20,7 +20,7 @@ services:
   server:
     build: .
     ports:
-      - "3001:3001"
+      - "3002:3002"
     environment:
       dbConnStr: "postgres://tracker_user:tracker_password@postgres:5432/issuetracker"
       jwtSecret: "your-secret-key-change-in-production"

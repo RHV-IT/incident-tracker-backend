@@ -2,9 +2,11 @@ package db
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -260,4 +262,35 @@ func (m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset in
 		totalPages = 1
 	}
 	return incidents, totalPages, totalItems, nil
+}
+
+func (m *IncidentsModel) FetchById(ctx context.Context, id int) (*IncidentReport, error) {
+	query := `
+		SELECT
+			id,
+			reporter_name, department, position, contact_info, 
+			date_of_incident, time_of_incident, location_of_incident, 
+			type_of_incident, people_involved, description_of_incident, 
+			immediate_action_taken, injury_or_damage, severity_level, 
+			supervisor_notified, recommended_preventive_action, incident_status 
+		FROM incidents
+		WHERE id = $1
+	`
+	var inc IncidentReport
+	err := m.DB.QueryRow(ctx, query, id).Scan(
+		&inc.Id,
+			&inc.ReporterName, &inc.Department, &inc.Position, &inc.ContactInfo,
+			&inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident,
+			&inc.TypeOfIncident, &inc.PeopleInvolved, &inc.DescriptionOfIncident,
+			&inc.ImmediateActionTaken, &inc.InjuryOrDamage, &inc.SeverityLevel,
+			&inc.SupervisorNotified, &inc.RecommendedPreventiveAction, &inc.IncidentStatus,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("database query error %w", err)
+	}
+
+	return &inc, nil
 }
