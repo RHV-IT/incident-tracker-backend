@@ -58,3 +58,7 @@ type PaginatedIncidentResponse struct {
 	Data       []db.IncidentReport `json:"data"`
 	Pagination PaginationMeta      `json:"pagination"`
 }
+
+type IncidentStatusUpdate struct {
+	Status string `json:"status" binding:"required"`
+}

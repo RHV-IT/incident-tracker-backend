@@ -294,3 +294,22 @@ func (m *IncidentsModel) FetchById(ctx context.Context, id int) (*IncidentReport
 
 	return &inc, nil
 }
+
+func(m *IncidentsModel) UpdateIncidentStatus(context context.Context, id int, status string) (*IncidentReport, error) {
+	query := `
+		UPDATE incidents
+		SET incident_status = $1
+		WHERE id = $2`
+	if !IncidentStatus(status).IsValid() {
+		return nil, fmt.Errorf("invalid incident status")
+	}
+	_, err := m.DB.Exec(context, query, status, id)
+	if err != nil {
+		return nil, fmt.Errorf("database query error: %w", err)
+	}
+	incident, err := m.FetchById(context, id)
+	if err != nil {
+		return nil, fmt.Errorf("database query error: %w", err)
+	}
+	return incident, nil
+}
