@@ -13,7 +13,6 @@ The Issue Tracker is a web application designed to help organizations track and 
   - Secure login with JWT tokens
   - User profile updates (superadmin only)
   - Account disable/enable functionality (superadmin only)
-  
 - **Incident Management**
   - Report new incidents with detailed information
   - Track incident severity levels (Near Miss, Minor, Major, Critical)
@@ -51,12 +50,14 @@ The Issue Tracker is a web application designed to help organizations track and 
 ### Running with Docker Compose (Recommended)
 
 1. Clone the repository
+
    ```bash
    git clone <repository-url>
    cd issueTracking
    ```
 
 2. Configure environment variables (optional, defaults are provided):
+
    ```bash
    # Or set environment variables directly
    export jwtSecret=your-secret-key
@@ -64,6 +65,7 @@ The Issue Tracker is a web application designed to help organizations track and 
    ```
 
 3. Start all services (PostgreSQL and server)
+
    ```bash
    docker compose up -d
    ```
@@ -88,23 +90,24 @@ export dbConnStr="postgres://tracker_user:tracker_password@localhost:5432/issuet
 air
 
 # Or run directly
-go run ./cmd/main.go
+go run ./cmd/
 ```
 
 ### Environment Variables
 
 The following environment variables are used:
 
-| Variable | Description | Default Value |
-|----------|-------------|---------------|
-| `PORT` | The port on which the server runs | `3002` |
-| `dbConnStr` | PostgreSQL connection string (use `postgres` hostname in Docker) | `postgres://tracker_user:tracker_password@postgres:5432/issuetracker` |
-| `jwtSecret` | Secret key for JWT token signing | `someSecret` |
-| `allowedOrigins` | Comma-separated list of allowed origins for CORS | `http://localhost:3000,http://192.168.9.227:3000` |
+| Variable         | Description                                                      | Default Value                                                         |
+| ---------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `PORT`           | The port on which the server runs                                | `3002`                                                                |
+| `dbConnStr`      | PostgreSQL connection string (use `postgres` hostname in Docker) | `postgres://tracker_user:tracker_password@postgres:5432/issuetracker` |
+| `jwtSecret`      | Secret key for JWT token signing                                 | `someSecret`                                                          |
+| `allowedOrigins` | Comma-separated list of allowed origins for CORS                 | `http://localhost:3000,http://192.168.9.227:3000`                     |
 
 These can be set in the `docker-compose.yml` environment section, exported in the shell, or via an `.env` file.
 
 To set up your environment:
+
 1. Copy `.env.example` to `.env`:
    ```bash
    cp .env.example .env
@@ -133,6 +136,7 @@ All API endpoints are prefixed with `/api/v1`.
 All authentication endpoints require appropriate roles and are protected by authentication middleware where noted.
 
 #### User Registration
+
 - `POST /api/v1/auth/register` - Register a new user
   - **Requires**: Superadmin role
   - **Request Body**:
@@ -153,6 +157,7 @@ All authentication endpoints require appropriate roles and are protected by auth
     - `500 Internal Server Error`: Database or hashing error
 
 #### User Login
+
 - `POST /api/v1/auth/login` - Authenticate user and receive JWT token
   - **Request Body**:
     ```json
@@ -181,6 +186,7 @@ All authentication endpoints require appropriate roles and are protected by auth
     - `500 Internal Server Error`: Database error
 
 #### User Management (Superadmin Only)
+
 All user management endpoints require superadmin role and authentication middleware.
 
 - `PUT /api/v1/auth/update` - Update user information
@@ -193,7 +199,6 @@ All user management endpoints require superadmin role and authentication middlew
       "department": "string (required)"
     }
     ```
-  
 - `PUT /api/v1/auth/disable` - Disable a user account
   - **Request Body**:
     ```json
@@ -201,25 +206,26 @@ All user management endpoints require superadmin role and authentication middlew
       "email": "string (required)"
     }
     ```
-  
 - `PUT /api/v1/auth/enable` - Enable a disabled user account
   - **Request Body**:
   ```json
   {
-      "email": "string (required)"
+    "email": "string (required)"
   }
   ```
 
 #### Reset Password (Superadmin Only)
+
 - `PUT /api/v1/auth/resetpassword` - Reset a user's password
   - **Requires**: Superadmin role
   - **Request Body**:
   ```json
   {
-      "email": "string (required)",
-      "password": "string (required, min 8 characters)"
+    "email": "string (required)",
+    "password": "string (required, min 8 characters)"
   }
   ```
+
   - **Responses**:
     - `200 OK`: Password successfully reset
     - `400 Bad Request`: Invalid input data
@@ -228,6 +234,7 @@ All user management endpoints require superadmin role and authentication middlew
     - `500 Internal Server Error`: Database or hashing error
 
 #### Get User
+
 - `GET /api/v1/user` - Get user information by email
   - **Requires**: Authentication (any authenticated user)
   - **Query Parameters**:
@@ -241,6 +248,7 @@ All user management endpoints require superadmin role and authentication middlew
 ### Incident Management Endpoints
 
 #### Report Incident
+
 - `POST /api/v1/incidents` - Submit a new incident report
   - **Requires**: No authentication required (anyone can report)
   - **Request Body**:
@@ -270,6 +278,7 @@ All user management endpoints require superadmin role and authentication middlew
     - `500 Internal Server Error`: Database error
 
 #### Update Incident Status
+
 - `PATCH /api/v1/incidents/:id/status` - Update incident status
   - **Requires**: Authentication (any authenticated user except reporter)
   - **Path Parameters**:
@@ -289,6 +298,7 @@ All user management endpoints require superadmin role and authentication middlew
     - `500 Internal Server Error`: Database error
 
 #### Get Incidents
+
 - `GET /api/v1/incidents` - Retrieve paginated list of incidents
   - **Requires**: Authentication (any authenticated user)
   - **Role-specific behavior**: Supervisors only see incidents from their department
@@ -302,52 +312,54 @@ All user management endpoints require superadmin role and authentication middlew
 
 ## Role Permissions
 
-| Role | Permissions |
-|------|-------------|
+| Role       | Permissions                                                                                                                                                         |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update incident status |
-| admin | Report incidents, view all incidents, update incident status |
-| supervisor | Report incidents, view own department incidents, update own department incidents |
-| reporter | Report incidents via public endpoint only |
+| admin      | Report incidents, view all incidents, update incident status                                                                                                        |
+| supervisor | Report incidents, view own department incidents, update own department incidents                                                                                    |
+| reporter   | Report incidents via public endpoint only                                                                                                                           |
 
 ## Database Schema
 
 The application uses two main tables defined in `tables.sql`:
 
 ### Users Table
+
 Stores user account information:
 
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | SERIAL | PRIMARY KEY | Auto-incrementing unique identifier |
-| name | VARCHAR(255) | NOT NULL | User's full name |
-| email | VARCHAR(255) | UNIQUE NOT NULL | User's email address (used for login) |
-| password | VARCHAR(255) | NOT NULL | Bcrypt hashed password |
-| role | VARCHAR(50) | NOT NULL DEFAULT 'reporter' | User role (reporter, supervisor, admin, superadmin) |
-| department | VARCHAR(100) | NOT NULL | User's department |
-| disabled | BOOLEAN | NOT NULL DEFAULT FALSE | Account status (true = disabled) |
+| Column     | Type         | Constraints                 | Description                                         |
+| ---------- | ------------ | --------------------------- | --------------------------------------------------- |
+| id         | SERIAL       | PRIMARY KEY                 | Auto-incrementing unique identifier                 |
+| name       | VARCHAR(255) | NOT NULL                    | User's full name                                    |
+| email      | VARCHAR(255) | UNIQUE NOT NULL             | User's email address (used for login)               |
+| password   | VARCHAR(255) | NOT NULL                    | Bcrypt hashed password                              |
+| role       | VARCHAR(50)  | NOT NULL DEFAULT 'reporter' | User role (reporter, supervisor, admin, superadmin) |
+| department | VARCHAR(100) | NOT NULL                    | User's department                                   |
+| disabled   | BOOLEAN      | NOT NULL DEFAULT FALSE      | Account status (true = disabled)                    |
 
 ### Incidents Table
+
 Stores incident reports:
 
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| id | SERIAL | PRIMARY KEY | Auto-incrementing unique identifier |
-| reporter_name | VARCHAR(255) | NOT NULL | Name of person reporting the incident |
-| department | VARCHAR(100) | NOT NULL | Department where incident occurred |
-| position | VARCHAR(100) | NOT NULL | Position/job title of reporter |
-| contact_info | VARCHAR(255) | NOT NULL | Contact information for reporter |
-| date_of_incident | VARCHAR(50) | NOT NULL | Date of incident (YYYY-MM-DD format) |
-| time_of_incident | VARCHAR(50) | NOT NULL | Time of incident (HH:MM format) |
-| location_of_incident | VARCHAR(255) | NOT NULL | Location where incident occurred |
-| type_of_incident | VARCHAR(150) | NOT NULL | Type/category of incident |
-| people_involved | TEXT | NOT NULL | Description of people involved |
-| description_of_incident | TEXT | NOT NULL | Detailed description of the incident |
-| immediate_action_taken | TEXT | NOT NULL | Actions taken immediately after incident |
-| injury_or_damage | TEXT | NOT NULL | Details of any injury or property damage |
-| severity_level | VARCHAR(50) | NOT NULL | Severity level (near miss, minor, major, critical) |
-| supervisor_notified | VARCHAR(255) | NOT NULL | Whether supervisor was notified |
-| recommended_preventive_action | TEXT | NOT NULL | Recommended actions to prevent recurrence |
-| incident_status | VARCHAR(50) | NOT NULL DEFAULT 'unresolved' | Current status (unresolved, inprogress, resolved) |
+| Column                        | Type         | Constraints                   | Description                                        |
+| ----------------------------- | ------------ | ----------------------------- | -------------------------------------------------- |
+| id                            | SERIAL       | PRIMARY KEY                   | Auto-incrementing unique identifier                |
+| reporter_name                 | VARCHAR(255) | NOT NULL                      | Name of person reporting the incident              |
+| department                    | VARCHAR(100) | NOT NULL                      | Department where incident occurred                 |
+| position                      | VARCHAR(100) | NOT NULL                      | Position/job title of reporter                     |
+| contact_info                  | VARCHAR(255) | NOT NULL                      | Contact information for reporter                   |
+| date_of_incident              | VARCHAR(50)  | NOT NULL                      | Date of incident (YYYY-MM-DD format)               |
+| time_of_incident              | VARCHAR(50)  | NOT NULL                      | Time of incident (HH:MM format)                    |
+| location_of_incident          | VARCHAR(255) | NOT NULL                      | Location where incident occurred                   |
+| type_of_incident              | VARCHAR(150) | NOT NULL                      | Type/category of incident                          |
+| people_involved               | TEXT         | NOT NULL                      | Description of people involved                     |
+| description_of_incident       | TEXT         | NOT NULL                      | Detailed description of the incident               |
+| immediate_action_taken        | TEXT         | NOT NULL                      | Actions taken immediately after incident           |
+| injury_or_damage              | TEXT         | NOT NULL                      | Details of any injury or property damage           |
+| severity_level                | VARCHAR(50)  | NOT NULL                      | Severity level (near miss, minor, major, critical) |
+| supervisor_notified           | VARCHAR(255) | NOT NULL                      | Whether supervisor was notified                    |
+| recommended_preventive_action | TEXT         | NOT NULL                      | Recommended actions to prevent recurrence          |
+| incident_status               | VARCHAR(50)  | NOT NULL DEFAULT 'unresolved' | Current status (unresolved, inprogress, resolved)  |
 
 ## Project Structure
 
@@ -404,6 +416,7 @@ Stores incident reports:
 ## Error Handling
 
 The API follows consistent error response format:
+
 ```json
 {
   "error": "Descriptive error message"
@@ -411,6 +424,7 @@ The API follows consistent error response format:
 ```
 
 HTTP status codes are used appropriately:
+
 - 2xx: Success
 - 4xx: Client errors (validation, authentication, etc.)
 - 5xx: Server errors (database issues, etc.)
@@ -418,18 +432,21 @@ HTTP status codes are used appropriately:
 ## Extending the Application
 
 ### Adding New Endpoints
+
 1. Define handler function in appropriate file under `cmd/`
 2. Add route to `routes.go` within the appropriate group
 3. Apply middleware as needed (authMiddleware() for protected routes)
 4. Update corresponding model in `internal/db/` if database changes needed
 
 ### Adding New Database Tables/Columns
+
 1. Modify `tables.sql` with schema changes
 2. Update corresponding model in `internal/db/`
 3. Update handler functions in `cmd/` to use new fields
 4. Rebuild and restart containers to apply changes
 
 ### Configuration Changes
+
 - Update `.env` file for environment-specific settings
 - Modify `.air.toml` for Air live reload configuration
 - Adjust Docker Compose file for service changes
@@ -444,6 +461,7 @@ HTTP status codes are used appropriately:
 6. Open a Pull Request
 
 Please ensure your code follows:
+
 - Go formatting standards (`go fmt`)
 - Clear, descriptive comments
 - Consistent error handling
