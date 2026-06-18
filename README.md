@@ -97,12 +97,20 @@ The following environment variables are used:
 
 | Variable | Description | Default Value |
 |----------|-------------|---------------|
-| `PORT` | The port on which the server runs | `3001` |
+| `PORT` | The port on which the server runs | `3002` |
 | `dbConnStr` | PostgreSQL connection string (use `postgres` hostname in Docker) | `postgres://tracker_user:tracker_password@postgres:5432/issuetracker` |
 | `jwtSecret` | Secret key for JWT token signing | `someSecret` |
 | `allowedOrigins` | Comma-separated list of allowed origins for CORS | `http://localhost:3000,http://192.168.9.227:3000` |
 
 These can be set in the `docker-compose.yml` environment section, exported in the shell, or via an `.env` file.
+
+To set up your environment:
+1. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+2. Edit `.env` with your desired values
+3. **Important**: The `.env` file is ignored by git. Commit `.env.example` but not `.env`.
 
 > **Note**: For production, change the default `jwtSecret` to a strong, unique value.
 
