@@ -200,8 +200,10 @@ HTTP Request → Gin Router → Middleware (if applicable) → Handler → Valid
 Developer Machine
 ├── Docker Compose
 │   ├── Go Application Container (built from Dockerfile)
-│   ├── Air (live reload enabled)
+│   │   - Exposed port: 3002 (maps to container port 3001)
+│   ├── Air (hot reload enabled)
 │   └── PostgreSQL:16-alpine (with initdb for schema)
+│       - Port: 5432
 └── Local filesystem (for code)
 ```
 

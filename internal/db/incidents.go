@@ -279,11 +279,11 @@ func (m *IncidentsModel) FetchById(ctx context.Context, id int) (*IncidentReport
 	var inc IncidentReport
 	err := m.DB.QueryRow(ctx, query, id).Scan(
 		&inc.Id,
-			&inc.ReporterName, &inc.Department, &inc.Position, &inc.ContactInfo,
-			&inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident,
-			&inc.TypeOfIncident, &inc.PeopleInvolved, &inc.DescriptionOfIncident,
-			&inc.ImmediateActionTaken, &inc.InjuryOrDamage, &inc.SeverityLevel,
-			&inc.SupervisorNotified, &inc.RecommendedPreventiveAction, &inc.IncidentStatus,
+		&inc.ReporterName, &inc.Department, &inc.Position, &inc.ContactInfo,
+		&inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident,
+		&inc.TypeOfIncident, &inc.PeopleInvolved, &inc.DescriptionOfIncident,
+		&inc.ImmediateActionTaken, &inc.InjuryOrDamage, &inc.SeverityLevel,
+		&inc.SupervisorNotified, &inc.RecommendedPreventiveAction, &inc.IncidentStatus,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -295,7 +295,7 @@ func (m *IncidentsModel) FetchById(ctx context.Context, id int) (*IncidentReport
 	return &inc, nil
 }
 
-func(m *IncidentsModel) UpdateIncidentStatus(context context.Context, id int, status string) (*IncidentReport, error) {
+func (m *IncidentsModel) UpdateIncidentStatus(context context.Context, id int, status string) (*IncidentReport, error) {
 	query := `
 		UPDATE incidents
 		SET incident_status = $1

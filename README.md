@@ -68,7 +68,7 @@ The Issue Tracker is a web application designed to help organizations track and 
    docker compose up -d
    ```
 
-4. The server will be available at `http://localhost:3001`
+4. The server will be available at `http://localhost:3002`
    - Database tables are automatically created on first run
    - Server waits for PostgreSQL to be healthy before starting
 
@@ -117,7 +117,7 @@ All API endpoints are prefixed with `/api/v1`.
 
 ### Health Check
 
-- `GET /ping` - Returns a pong message to verify the service is running
+- `GET /api/v1/ping` - Returns a pong message to verify the service is running
   - Response: `{"message": "pong"}`
 
 ### Authentication Endpoints
@@ -125,7 +125,7 @@ All API endpoints are prefixed with `/api/v1`.
 All authentication endpoints require appropriate roles and are protected by authentication middleware where noted.
 
 #### User Registration
-- `POST /auth/register` - Register a new user
+- `POST /api/v1/auth/register` - Register a new user
   - **Requires**: Superadmin role
   - **Request Body**:
     ```json
@@ -145,7 +145,7 @@ All authentication endpoints require appropriate roles and are protected by auth
     - `500 Internal Server Error`: Database or hashing error
 
 #### User Login
-- `POST /auth/login` - Authenticate user and receive JWT token
+- `POST /api/v1/auth/login` - Authenticate user and receive JWT token
   - **Request Body**:
     ```json
     {
@@ -175,7 +175,7 @@ All authentication endpoints require appropriate roles and are protected by auth
 #### User Management (Superadmin Only)
 All user management endpoints require superadmin role and authentication middleware.
 
-- `PUT /auth/update` - Update user information
+- `PUT /api/v1/auth/update` - Update user information
   - **Request Body**:
     ```json
     {
@@ -186,7 +186,7 @@ All user management endpoints require superadmin role and authentication middlew
     }
     ```
   
-- `PUT /auth/disable` - Disable a user account
+- `PUT /api/v1/auth/disable` - Disable a user account
   - **Request Body**:
     ```json
     {
@@ -194,7 +194,7 @@ All user management endpoints require superadmin role and authentication middlew
     }
     ```
   
-- `PUT /auth/enable` - Enable a disabled user account
+- `PUT /api/v1/auth/enable` - Enable a disabled user account
   - **Request Body**:
   ```json
   {
@@ -203,7 +203,7 @@ All user management endpoints require superadmin role and authentication middlew
   ```
 
 #### Reset Password (Superadmin Only)
-- `PUT /auth/resetpassword` - Reset a user's password
+- `PUT /api/v1/auth/resetpassword` - Reset a user's password
   - **Requires**: Superadmin role
   - **Request Body**:
   ```json
@@ -220,7 +220,7 @@ All user management endpoints require superadmin role and authentication middlew
     - `500 Internal Server Error`: Database or hashing error
 
 #### Get User
-- `GET /user` - Get user information by email
+- `GET /api/v1/user` - Get user information by email
   - **Requires**: Authentication (any authenticated user)
   - **Query Parameters**:
     - `email`: User's email address (required)
@@ -233,7 +233,7 @@ All user management endpoints require superadmin role and authentication middlew
 ### Incident Management Endpoints
 
 #### Report Incident
-- `POST /incidents` - Submit a new incident report
+- `POST /api/v1/incidents` - Submit a new incident report
   - **Requires**: No authentication required (anyone can report)
   - **Request Body**:
     ```json
@@ -262,8 +262,8 @@ All user management endpoints require superadmin role and authentication middlew
     - `500 Internal Server Error`: Database error
 
 #### Update Incident Status
-- `PATCH /incidents/:id/status` - Update incident status
-  - **Requires**: Authentication (any authenticated user)
+- `PATCH /api/v1/incidents/:id/status` - Update incident status
+  - **Requires**: Authentication (any authenticated user except reporter)
   - **Path Parameters**:
     - `id`: Incident ID (required)
   - **Request Body**:
@@ -276,11 +276,12 @@ All user management endpoints require superadmin role and authentication middlew
     - `200 OK`: Status updated successfully
     - `400 Bad Request`: Invalid status value
     - `401 Unauthorized`: Missing or invalid authentication token
+    - `403 Forbidden`: Reporter role or supervisor updating incident from another department
     - `404 Not Found`: Incident not found
     - `500 Internal Server Error`: Database error
 
 #### Get Incidents
-- `GET /incidents` - Retrieve paginated list of incidents
+- `GET /api/v1/incidents` - Retrieve paginated list of incidents
   - **Requires**: Authentication (any authenticated user)
   - **Role-specific behavior**: Supervisors only see incidents from their department
   - **Query Parameters**:
@@ -290,6 +291,15 @@ All user management endpoints require superadmin role and authentication middlew
     - `200 OK`: Paginated list of incidents
     - `401 Unauthorized`: Missing or invalid authentication token
     - `500 Internal Server Error`: Database error
+
+## Role Permissions
+
+| Role | Permissions |
+|------|-------------|
+| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update incident status |
+| admin | Report incidents, view all incidents, update incident status |
+| supervisor | Report incidents, view own department incidents, update own department incidents |
+| reporter | Report incidents via public endpoint only |
 
 ## Database Schema
 
