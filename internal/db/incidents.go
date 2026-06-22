@@ -92,6 +92,13 @@ type IncidentUpdate struct {
 	EquipmentRetained bool `json:"equipmentRetained"`
 	EquipmentNumber string `json:"equipmentNumber"`
 	IsMedicalDevice string `json:"isMedicalDevice"`
+	
+	//reporter details
+	ReporterName string `json:"reporterName" binding:"required"`
+	ReporterDesignation string `json:"reporterDesignation" binding:"required"`
+	Signature bool `json:"signature" binding:"required"`
+	ReporterInfo string `json:"reporterInfo" binding:"required"`
+	Date string `json:"date" binding:"required"`
 }
 
 type Incident struct {
