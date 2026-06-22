@@ -87,7 +87,11 @@ type IncidentUpdate struct {
 	//equipment involved
 	EquipmentInvolved string `json:"equipmentInvolved"`
 	EquipmentModel string `json:"equipmentModel,omitempty"`
-	
+	EquipmentSentForRepair bool `json:"equipmentSentForRepair"`
+	EquipmentWithdrawn bool `json:"equipmentWithdrawn"`
+	EquipmentRetained bool `json:"equipmentRetained"`
+	EquipmentNumber string `json:"equipmentNumber"`
+	IsMedicalDevice string `json:"isMedicalDevice"`
 }
 
 type Incident struct {
