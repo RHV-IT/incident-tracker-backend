@@ -49,7 +49,7 @@ func (i IncidentStatus) IsValid() bool {
 
 type IncidentUpdate struct {
 	Id int `json:"id"`
-	// Section A: principal person involved(who it happened to)
+	//principal person involved(who it happened to)
 	PrincipalName string `json:"principalName"`
 	PrincipalGender string `json:"principalGender"`
 	PrincipalDob string `json:"principalDob"`
@@ -74,6 +74,15 @@ type IncidentUpdate struct {
 	WitnessWardDept string `json:"witnessWardDept,omitempty"`
 	WitnessJobTitle string `json:"witnessJobTitle,omitempty"`
 	WitnessPhone string `json:"witenssPhone,omitempty"`
+
+	//factual description of the incident
+	IsNearMiss bool `json:"isNearMiss"`
+	CauseGroup string `json:"causeGroup"`
+	Causes string `json:"causes"`
+	PrescribingDoctor string `json:"prescribingDoctor"`
+
+	//TreatementReceived
+	TreatmentReceived string `json:"treatmentReceived"`
 }
 
 type Incident struct {
