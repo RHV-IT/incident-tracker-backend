@@ -1,3 +1,4 @@
 .env
 tmp/
 requirements.txt
+update.txt
