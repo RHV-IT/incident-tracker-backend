@@ -98,7 +98,7 @@ type IncidentUpdate struct {
 	ReporterDesignation string `json:"reporterDesignation" binding:"required"`
 	Signature bool `json:"signature" binding:"required"`
 	ReporterInfo string `json:"reporterInfo" binding:"required"`
-	Date string `json:"date" binding:"required"`
+	ReporterDate string `json:"date" binding:"required"`
 }
 
 type Incident struct {
