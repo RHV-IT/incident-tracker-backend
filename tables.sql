@@ -63,7 +63,8 @@ CREATE TABLE incidents (
     reporter_date VARCHAR(50) NOT NULL,       -- Avoids SQL 'date' keyword conflicts
 
     -- severity level
-    severity_level VARCHAR(50) NOT NULL DEFAULT 'near miss'
+    severity_level VARCHAR(50) NOT NULL DEFAULT 'near miss',
+    incident_status VARCHAR(50) NOT NULL DEFAULT 'unresolved'
 );
 
 -- Seed Initial Super Admin
