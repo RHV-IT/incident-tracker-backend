@@ -15,7 +15,6 @@ type IncidentsModel struct {
 }
 
 type SeverityLevel string
-
 type IncidentStatus string
 
 const (
@@ -47,160 +46,83 @@ func (i IncidentStatus) IsValid() bool {
 	return false
 }
 
-type IncidentUpdate struct {
-	Id int `json:"id"`
-	//principal person involved(who it happened to)
-	PrincipalName string `json:"principalName"`
-	PrincipalGender string `json:"principalGender"`
-	PrincipalDob string `json:"principalDob"`
-	PrincipalType string `json:"principalType"` // patient, staff, visisting consultant, other
-	PatientId string `json:"patientId,omitempty"`
-	PatientWardDept string `json:"patientWardDept,omitempty"`
-	StaffJobTitle string `json:"staffJobTitle,omitempty"`
-	StaffPhone string `json:"staffPhone,omitempty"`
-	StaffPlaceOfWork string `json:"staffPlaceOfWork,omitempty"`
-	StaffSite string `json:"staffSite,omitempty"`
-	PeopleInvolved string `json:"peopleInvolved"`
-
-	//when and where the incident occured
-	DateOfIncident string `json:"dateOfIncident"`
-	TimeOfIncident string `json:"timeOfIncident"`
-	LocationOfIncident string `json:"locationOfIncident"`
-	IncidentWardDept string `json:"incidentWardDept"`
-	
-	// witnesses
-	Witnesses string `json:"witnesses,omitempty"`
-	WitnessType string `json:"witnessType,omitempty"`
-	WitnessWardDept string `json:"witnessWardDept,omitempty"`
-	WitnessJobTitle string `json:"witnessJobTitle,omitempty"`
-	WitnessPhone string `json:"witenssPhone,omitempty"`
-
-	//factual description of the incident
-	IsNearMiss bool `json:"isNearMiss"`
-	CauseGroup string `json:"causeGroup"`
-	Causes string `json:"causes"`
-	PrescribingDoctor string `json:"prescribingDoctor"`
-
-	//TreatementReceived
-	TreatmentReceived string `json:"treatmentReceived"`
-
-	//equipment involved
-	EquipmentInvolved string `json:"equipmentInvolved"`
-	EquipmentModel string `json:"equipmentModel,omitempty"`
-	EquipmentSentForRepair bool `json:"equipmentSentForRepair"`
-	EquipmentWithdrawn bool `json:"equipmentWithdrawn"`
-	EquipmentRetained bool `json:"equipmentRetained"`
-	EquipmentNumber string `json:"equipmentNumber"`
-	IsMedicalDevice string `json:"isMedicalDevice"`
-	
-	//reporter details
-	ReporterName string `json:"reporterName" binding:"required"`
-	ReporterDesignation string `json:"reporterDesignation" binding:"required"`
-	Signature bool `json:"signature" binding:"required"`
-	ReporterInfo string `json:"reporterInfo" binding:"required"`
-	ReporterDate string `json:"date" binding:"required"`
-}
-
-type Incident struct {
-	Id                          int            `json:"id"`
-	ReporterName                string         `json:"reporterName"`
-	Department                  string         `json:"department"`
-	Position                    string         `json:"position"`
-	ContactInfo                 string         `json:"contactInfo"`
-	DateOfIncident              string         `json:"dateOfIncident"`
-	TimeOfIncident              string         `json:"timeOfIncident"`
-	LocationOfIncident          string         `json:"locationOfIncident"`
-	TypeOfIncident              string         `json:"typeOfIncident"`
-	PeopleInvolved              string         `json:"peopleInvolved"`
-	DescriptionOfIncident       string         `json:"descriptionOfIncident"`
-	ImmediateActionTaken        string         `json:"immediateActionTaken"`
-	InjuryOrDamage              string         `json:"injuryOrDamage"`
-	SeverityLevel               SeverityLevel  `json:"severityLevel"`
-	SupervisorNotified          string         `json:"supervisorNotified"`
-	RecommendedPreventiveAction string         `json:"recommendedPreventiveAction"`
-	IncidentStatus              IncidentStatus `json:"incidentStatus"`
-}
-
+// Unified core structure mapping perfectly to the fresh tables.sql schema
 type IncidentReport struct {
-	Id                          int            `json:"id"`
-	ReporterName                string         `json:"reporterName"`
-	Department                  string         `json:"department"`
-	Position                    string         `json:"position"`
-	ContactInfo                 string         `json:"contactInfo"`
-	DateOfIncident              string         `json:"dateOfIncident"`
-	TimeOfIncident              string         `json:"timeOfIncident"`
-	LocationOfIncident          string         `json:"locationOfIncident"`
-	TypeOfIncident              string         `json:"typeOfIncident"`
-	PeopleInvolved              string         `json:"peopleInvolved"`
-	DescriptionOfIncident       string         `json:"descriptionOfIncident"`
-	ImmediateActionTaken        string         `json:"immediateActionTaken"`
-	InjuryOrDamage              string         `json:"injuryOrDamage"`
-	SeverityLevel               SeverityLevel  `json:"severityLevel"`
-	SupervisorNotified          string         `json:"supervisorNotified"`
-	RecommendedPreventiveAction string         `json:"recommendedPreventiveAction"`
-	IncidentStatus              IncidentStatus `json:"incidentStatus"`
+	Id                     int            `json:"id"`
+	PrincipalName          string         `json:"principalName"`
+	PrincipalGender        string         `json:"principalGender"`
+	PrincipalDob           string         `json:"principalDob"`
+	PrincipalType          string         `json:"principalType"` // patient, staff, visiting consultant, other
+	PatientId              string         `json:"patientId,omitempty"`
+	PatientWardDept        string         `json:"patientWardDept,omitempty"`
+	StaffJobTitle          string         `json:"staffJobTitle,omitempty"`
+	StaffPhone             string         `json:"staffPhone,omitempty"`
+	StaffPlaceOfWork       string         `json:"staffPlaceOfWork,omitempty"`
+	StaffSite              string         `json:"staffSite,omitempty"`
+	PeopleInvolved         string         `json:"peopleInvolved"`
+	DateOfIncident         string         `json:"dateOfIncident"`
+	TimeOfIncident         string         `json:"timeOfIncident"`
+	LocationOfIncident     string         `json:"locationOfIncident"`
+	IncidentWardDept       string         `json:"incidentWardDept"`
+	Witnesses              string         `json:"witnesses,omitempty"`
+	WitnessType            string         `json:"witnessType,omitempty"`
+	WitnessWardDept        string         `json:"witnessWardDept,omitempty"`
+	WitnessJobTitle        string         `json:"witnessJobTitle,omitempty"`
+	WitnessPhone           string         `json:"witenssPhone,omitempty"` // Preserved frontend JSON tag typo safely
+	IsNearMiss             bool           `json:"isNearMiss"`
+	CauseGroup             string         `json:"causeGroup"`
+	Causes                 string         `json:"causes"`
+	PrescribingDoctor      string         `json:"prescribingDoctor"`
+	TreatmentReceived      string         `json:"treatmentReceived"`
+	EquipmentInvolved      string         `json:"equipmentInvolved"`
+	EquipmentModel         string         `json:"equipmentModel,omitempty"`
+	EquipmentSentForRepair bool           `json:"equipmentSentForRepair"`
+	EquipmentWithdrawn     bool           `json:"equipmentWithdrawn"`
+	EquipmentRetained      bool           `json:"equipmentRetained"`
+	EquipmentNumber        string         `json:"equipmentNumber"`
+	IsMedicalDevice        string         `json:"isMedicalDevice"`
+	ReporterName           string         `json:"reporterName" binding:"required"`
+	ReporterDesignation    string         `json:"reporterDesignation" binding:"required"`
+	Signature              bool           `json:"signature" binding:"required"`
+	ReporterInfo           string         `json:"reporterInfo" binding:"required"`
+	ReporterDate           string         `json:"date" binding:"required"`
+	SeverityLevel          SeverityLevel  `json:"severityLevel"`
+	IncidentStatus         IncidentStatus `json:"incidentStatus"`
+}
+
+// Alias Incident to IncidentReport to keep your model layers aligned perfectly
+type Incident IncidentReport
+
+type IncidentStatusUpdate struct {
+	Status string `json:"status" binding:"required"`
 }
 
 func (m *IncidentsModel) Insert(ctx context.Context, incident *Incident) (*Incident, error) {
 	query := `
 		INSERT INTO incidents
 		(
-			reporter_name, 
-			department, 
-			position, 
-			contact_info, 
-			date_of_incident, 
-			time_of_incident, 
-			location_of_incident, 
-			type_of_incident, 
-			people_involved, 
-			description_of_incident, 
-			immediate_action_taken, 
-			injury_or_damage, 
-			severity_level, 
-			supervisor_notified, 
-			recommended_preventive_action,
-			incident_status
+			principal_name, principal_gender, principal_dob, principal_type, patient_id,
+			patient_ward_dept, staff_job_title, staff_phone, staff_place_of_work, staff_site,
+			people_involved, date_of_incident, time_of_incident, location_of_incident, incident_ward_dept,
+			witnesses, witness_type, witness_ward_dept, witness_job_title, witness_phone,
+			is_near_miss, cause_group, causes, prescribing_doctor, treatment_received,
+			equipment_involved, equipment_model, equipment_sent_for_repair, equipment_withdrawn, equipment_retained,
+			equipment_number, is_medical_device, reporter_name, reporter_designation, signature,
+			reporter_info, reporter_date, severity_level, incident_status
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-		RETURNING id, reporter_name, department, position, contact_info, date_of_incident, time_of_incident, location_of_incident, type_of_incident, people_involved, description_of_incident, immediate_action_taken, injury_or_damage, severity_level, supervisor_notified, recommended_preventive_action, incident_status;
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39)
+		RETURNING id;
 	`
 	err := m.DB.QueryRow(ctx, query,
-		incident.ReporterName,
-		incident.Department,
-		incident.Position,
-		incident.ContactInfo,
-		incident.DateOfIncident,
-		incident.TimeOfIncident,
-		incident.LocationOfIncident,
-		incident.TypeOfIncident,
-		incident.PeopleInvolved,
-		incident.DescriptionOfIncident,
-		incident.ImmediateActionTaken,
-		incident.InjuryOrDamage,
-		incident.SeverityLevel,
-		incident.SupervisorNotified,
-		incident.RecommendedPreventiveAction,
-		incident.IncidentStatus,
-	).Scan(
-		&incident.Id,
-		&incident.ReporterName,
-		&incident.Department,
-		&incident.Position,
-		&incident.ContactInfo,
-		&incident.DateOfIncident,
-		&incident.TimeOfIncident,
-		&incident.LocationOfIncident,
-		&incident.TypeOfIncident,
-		&incident.PeopleInvolved,
-		&incident.DescriptionOfIncident,
-		&incident.ImmediateActionTaken,
-		&incident.InjuryOrDamage,
-		&incident.SeverityLevel,
-		&incident.SupervisorNotified,
-		&incident.RecommendedPreventiveAction,
-		&incident.IncidentStatus,
-	)
+		incident.PrincipalName, incident.PrincipalGender, incident.PrincipalDob, incident.PrincipalType, incident.PatientId,
+		incident.PatientWardDept, incident.StaffJobTitle, incident.StaffPhone, incident.StaffPlaceOfWork, incident.StaffSite,
+		incident.PeopleInvolved, incident.DateOfIncident, incident.TimeOfIncident, incident.LocationOfIncident, incident.IncidentWardDept,
+		incident.Witnesses, incident.WitnessType, incident.WitnessWardDept, incident.WitnessJobTitle, incident.WitnessPhone,
+		incident.IsNearMiss, incident.CauseGroup, incident.Causes, incident.PrescribingDoctor, incident.TreatmentReceived,
+		incident.EquipmentInvolved, incident.EquipmentModel, incident.EquipmentSentForRepair, incident.EquipmentWithdrawn, incident.EquipmentRetained,
+		incident.EquipmentNumber, incident.IsMedicalDevice, incident.ReporterName, incident.ReporterDesignation, incident.Signature,
+		incident.ReporterInfo, incident.ReporterDate, incident.SeverityLevel, incident.IncidentStatus,
+	).Scan(&incident.Id)
 
 	if err != nil {
 		return nil, fmt.Errorf("database query error: %w", err)
@@ -215,14 +137,17 @@ func (m *IncidentsModel) FetchIncidents(ctx context.Context, limit, offset int) 
 	if err != nil {
 		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
 	}
+
 	query := `
 		SELECT
-			id,
-			reporter_name, department, position, contact_info, 
-			date_of_incident, time_of_incident, location_of_incident, 
-			type_of_incident, people_involved, description_of_incident, 
-			immediate_action_taken, injury_or_damage, severity_level, 
-			supervisor_notified, recommended_preventive_action, incident_status 
+			id, principal_name, principal_gender, principal_dob, principal_type, patient_id,
+			patient_ward_dept, staff_job_title, staff_phone, staff_place_of_work, staff_site,
+			people_involved, date_of_incident, time_of_incident, location_of_incident, incident_ward_dept,
+			witnesses, witness_type, witness_ward_dept, witness_job_title, witness_phone,
+			is_near_miss, cause_group, causes, prescribing_doctor, treatment_received,
+			equipment_involved, equipment_model, equipment_sent_for_repair, equipment_withdrawn, equipment_retained,
+			equipment_number, is_medical_device, reporter_name, reporter_designation, signature,
+			reporter_info, reporter_date, severity_level, incident_status
 		FROM incidents 
 		ORDER BY id DESC 
 		LIMIT $1 OFFSET $2
@@ -232,22 +157,26 @@ func (m *IncidentsModel) FetchIncidents(ctx context.Context, limit, offset int) 
 		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
 	}
 	defer rows.Close()
+
 	var incidents []IncidentReport
 	for rows.Next() {
 		var inc IncidentReport
 		err := rows.Scan(
-			&inc.Id,
-			&inc.ReporterName, &inc.Department, &inc.Position, &inc.ContactInfo,
-			&inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident,
-			&inc.TypeOfIncident, &inc.PeopleInvolved, &inc.DescriptionOfIncident,
-			&inc.ImmediateActionTaken, &inc.InjuryOrDamage, &inc.SeverityLevel,
-			&inc.SupervisorNotified, &inc.RecommendedPreventiveAction, &inc.IncidentStatus,
+			&inc.Id, &inc.PrincipalName, &inc.PrincipalGender, &inc.PrincipalDob, &inc.PrincipalType, &inc.PatientId,
+			&inc.PatientWardDept, &inc.StaffJobTitle, &inc.StaffPhone, &inc.StaffPlaceOfWork, &inc.StaffSite,
+			&inc.PeopleInvolved, &inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident, &inc.IncidentWardDept,
+			&inc.Witnesses, &inc.WitnessType, &inc.WitnessWardDept, &inc.WitnessJobTitle, &inc.WitnessPhone,
+			&inc.IsNearMiss, &inc.CauseGroup, &inc.Causes, &inc.PrescribingDoctor, &inc.TreatmentReceived,
+			&inc.EquipmentInvolved, &inc.EquipmentModel, &inc.EquipmentSentForRepair, &inc.EquipmentWithdrawn, &inc.EquipmentRetained,
+			&inc.EquipmentNumber, &inc.IsMedicalDevice, &inc.ReporterName, &inc.ReporterDesignation, &inc.Signature,
+			&inc.ReporterInfo, &inc.ReporterDate, &inc.SeverityLevel, &inc.IncidentStatus,
 		)
 		if err != nil {
 			return nil, 0, 0, fmt.Errorf("database query error: %w", err)
 		}
 		incidents = append(incidents, inc)
 	}
+
 	totalPages := int(math.Ceil(float64(totalItems) / float64(limit)))
 	if totalPages == 0 {
 		totalPages = 1
@@ -260,33 +189,25 @@ func (m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset in
 	countQuery := `
 		SELECT COUNT(*) 
 		FROM incidents 
-		WHERE LOWER(TRIM(department)) = LOWER(TRIM($1))
+		WHERE LOWER(TRIM(incident_ward_dept)) = LOWER(TRIM($1))
 	`
 	err := m.DB.QueryRow(ctx, countQuery, department).Scan(&totalItems)
 	if err != nil {
 		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
 	}
+
 	query := `
 		SELECT 
-			id,
-			reporter_name, 
-			department, 
-			position, 
-			contact_info, 
-			date_of_incident, 
-			time_of_incident, 
-			location_of_incident, 
-			type_of_incident, 
-			people_involved, 
-			description_of_incident, 
-			immediate_action_taken, 
-			injury_or_damage, 
-			severity_level, 
-			supervisor_notified, 
-			recommended_preventive_action,
-			incident_status
+			id, principal_name, principal_gender, principal_dob, principal_type, patient_id,
+			patient_ward_dept, staff_job_title, staff_phone, staff_place_of_work, staff_site,
+			people_involved, date_of_incident, time_of_incident, location_of_incident, incident_ward_dept,
+			witnesses, witness_type, witness_ward_dept, witness_job_title, witness_phone,
+			is_near_miss, cause_group, causes, prescribing_doctor, treatment_received,
+			equipment_involved, equipment_model, equipment_sent_for_repair, equipment_withdrawn, equipment_retained,
+			equipment_number, is_medical_device, reporter_name, reporter_designation, signature,
+			reporter_info, reporter_date, severity_level, incident_status
 		FROM incidents 
-		WHERE LOWER(TRIM(department)) = LOWER(TRIM($1))
+		WHERE LOWER(TRIM(incident_ward_dept)) = LOWER(TRIM($1))
 		ORDER BY id DESC 
 		LIMIT $2 OFFSET $3	
 	`
@@ -295,22 +216,26 @@ func (m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset in
 		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
 	}
 	defer rows.Close()
+
 	var incidents []IncidentReport
 	for rows.Next() {
 		var inc IncidentReport
 		err := rows.Scan(
-			&inc.Id,
-			&inc.ReporterName, &inc.Department, &inc.Position, &inc.ContactInfo,
-			&inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident,
-			&inc.TypeOfIncident, &inc.PeopleInvolved, &inc.DescriptionOfIncident,
-			&inc.ImmediateActionTaken, &inc.InjuryOrDamage, &inc.SeverityLevel,
-			&inc.SupervisorNotified, &inc.RecommendedPreventiveAction, &inc.IncidentStatus,
+			&inc.Id, &inc.PrincipalName, &inc.PrincipalGender, &inc.PrincipalDob, &inc.PrincipalType, &inc.PatientId,
+			&inc.PatientWardDept, &inc.StaffJobTitle, &inc.StaffPhone, &inc.StaffPlaceOfWork, &inc.StaffSite,
+			&inc.PeopleInvolved, &inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident, &inc.IncidentWardDept,
+			&inc.Witnesses, &inc.WitnessType, &inc.WitnessWardDept, &inc.WitnessJobTitle, &inc.WitnessPhone,
+			&inc.IsNearMiss, &inc.CauseGroup, &inc.Causes, &inc.PrescribingDoctor, &inc.TreatmentReceived,
+			&inc.EquipmentInvolved, &inc.EquipmentModel, &inc.EquipmentSentForRepair, &inc.EquipmentWithdrawn, &inc.EquipmentRetained,
+			&inc.EquipmentNumber, &inc.IsMedicalDevice, &inc.ReporterName, &inc.ReporterDesignation, &inc.Signature,
+			&inc.ReporterInfo, &inc.ReporterDate, &inc.SeverityLevel, &inc.IncidentStatus,
 		)
 		if err != nil {
 			return nil, 0, 0, fmt.Errorf("database query error: %w", err)
 		}
 		incidents = append(incidents, inc)
 	}
+
 	totalPages := int(math.Ceil(float64(totalItems) / float64(limit)))
 	if totalPages == 0 {
 		totalPages = 1
@@ -321,23 +246,27 @@ func (m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset in
 func (m *IncidentsModel) FetchById(ctx context.Context, id int) (*IncidentReport, error) {
 	query := `
 		SELECT
-			id,
-			reporter_name, department, position, contact_info, 
-			date_of_incident, time_of_incident, location_of_incident, 
-			type_of_incident, people_involved, description_of_incident, 
-			immediate_action_taken, injury_or_damage, severity_level, 
-			supervisor_notified, recommended_preventive_action, incident_status 
+			id, principal_name, principal_gender, principal_dob, principal_type, patient_id,
+			patient_ward_dept, staff_job_title, staff_phone, staff_place_of_work, staff_site,
+			people_involved, date_of_incident, time_of_incident, location_of_incident, incident_ward_dept,
+			witnesses, witness_type, witness_ward_dept, witness_job_title, witness_phone,
+			is_near_miss, cause_group, causes, prescribing_doctor, treatment_received,
+			equipment_involved, equipment_model, equipment_sent_for_repair, equipment_withdrawn, equipment_retained,
+			equipment_number, is_medical_device, reporter_name, reporter_designation, signature,
+			reporter_info, reporter_date, severity_level, incident_status
 		FROM incidents
 		WHERE id = $1
 	`
 	var inc IncidentReport
 	err := m.DB.QueryRow(ctx, query, id).Scan(
-		&inc.Id,
-		&inc.ReporterName, &inc.Department, &inc.Position, &inc.ContactInfo,
-		&inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident,
-		&inc.TypeOfIncident, &inc.PeopleInvolved, &inc.DescriptionOfIncident,
-		&inc.ImmediateActionTaken, &inc.InjuryOrDamage, &inc.SeverityLevel,
-		&inc.SupervisorNotified, &inc.RecommendedPreventiveAction, &inc.IncidentStatus,
+		&inc.Id, &inc.PrincipalName, &inc.PrincipalGender, &inc.PrincipalDob, &inc.PrincipalType, &inc.PatientId,
+		&inc.PatientWardDept, &inc.StaffJobTitle, &inc.StaffPhone, &inc.StaffPlaceOfWork, &inc.StaffSite,
+		&inc.PeopleInvolved, &inc.DateOfIncident, &inc.TimeOfIncident, &inc.LocationOfIncident, &inc.IncidentWardDept,
+		&inc.Witnesses, &inc.WitnessType, &inc.WitnessWardDept, &inc.WitnessJobTitle, &inc.WitnessPhone,
+		&inc.IsNearMiss, &inc.CauseGroup, &inc.Causes, &inc.PrescribingDoctor, &inc.TreatmentReceived,
+		&inc.EquipmentInvolved, &inc.EquipmentModel, &inc.EquipmentSentForRepair, &inc.EquipmentWithdrawn, &inc.EquipmentRetained,
+		&inc.EquipmentNumber, &inc.IsMedicalDevice, &inc.ReporterName, &inc.ReporterDesignation, &inc.Signature,
+		&inc.ReporterInfo, &inc.ReporterDate, &inc.SeverityLevel, &inc.IncidentStatus,
 	)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
