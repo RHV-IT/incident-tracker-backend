@@ -73,7 +73,7 @@ func (a *application) reportIncident(c *gin.Context) {
 
 	savedIncident, err := a.models.Incidents.Insert(context, dbIncident)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to execute database query"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error(err)})
 		return
 	}
 	c.JSON(http.StatusOK, savedIncident)
