@@ -60,7 +60,7 @@ CREATE TABLE incidents (
     reporter_designation VARCHAR(255) NOT NULL,
     signature BOOLEAN NOT NULL DEFAULT FALSE,
     reporter_info VARCHAR(255) NOT NULL,
-    reporter_date VARCHAR(50) NOT NULL       -- Avoids SQL 'date' keyword conflicts
+    reporter_date VARCHAR(50) NOT NULL,       -- Avoids SQL 'date' keyword conflicts
 
     -- severity level
     severity_level VARCHAR(50) NOT NULL DEFAULT 'near miss',
