@@ -79,8 +79,8 @@ type IncidentReport struct {
 	EquipmentSentForRepair bool           `json:"equipmentSentForRepair"`
 	EquipmentWithdrawn     bool           `json:"equipmentWithdrawn"`
 	EquipmentRetained      bool           `json:"equipmentRetained"`
-	EquipmentNumber        string         `json:"equipmentNumber"`
-	IsMedicalDevice        string         `json:"isMedicalDevice"`
+	EquipmentNumber        string         `json:"equipmentNumber,omitempty"`
+	IsMedicalDevice        string         `json:"isMedicalDevice,omitempty"`
 	ReporterName           string         `json:"reporterName" binding:"required"`
 	ReporterDesignation    string         `json:"reporterDesignation" binding:"required"`
 	Signature              bool           `json:"signature" binding:"required"`
