@@ -5,7 +5,6 @@ docker volume rm $(docker volume ls -q)
 read -p "Do you want to start containers? (y/n) " choice
 if [ "$choice" != "y" ]; then
     echo "container initialization cancelled"
-    exit 0
 else
     echo "Starting docker compose"
     docker compose up -d
