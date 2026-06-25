@@ -75,7 +75,30 @@ create TABLE incident_management (
     contributory_factors TEXT NOT NULL,
     actions_taken_outcomes TEXT NOT NULL,
     recommendations TEXT NOT NULL,
-    lessons_learned TEXT NOT NULL,    
+    lessons_learned TEXT NOT NULL,
+
+    informed_patient BOOLEAN NOT NULL DEFAULT FALSE,
+    informed_relative BOOLEAN NOT NULL DEFAULT FALSE,
+    informed_senior_manager BOOLEAN NOT NULL DEFAULT FALSE,
+    informed_pharmacist BOOLEAN NOT NULL DEFAULT FALSE,
+    police_incident_number VARCHAR(100),
+    informed_other TEXT,
+
+    risk_severity INT NOT NULL,
+    risk_likelihood INT NOT NULL,
+    risk_rating INT NOT NULL,
+
+    ohs_absence_over_3_days BOOLEAN,
+    ohs_act_of_violence_or_danger BOOLEAN,
+    ohs_hospitalisation_over_24_hours BOOLEAN,
+    ohs_staff_name VARCHAR(255),
+    ohs_staff_dob VARCHAR(50),
+    ohs_staff_address TEXT,
+
+    manager_name VARCHAR(255) NOT NULL,
+    manager_signature BOOLEAN NOT NULL DEFAULT FALSE, -- Aligns with your signature standard
+    manager_designation VARCHAR(255) NOT NULL,
+    manager_date VARCHAR(50) NOT NULL
 )
 
 -- Seed Initial Super Admin
@@ -84,3 +107,5 @@ VALUES ('super admin', 'admin@example.com', '$2a$10$UQgnunKYIsM.hTWtjYooG.SPNKBq
 
 -- Index for Fast Dashboard Performance
 CREATE INDEX IF NOT EXISTS idx_incidents_id_desc ON incidents (id DESC);
+
+CREATE INDEX IF NOT EXISTS idx_incident_management_incident_id ON incident_management (incident_id);
