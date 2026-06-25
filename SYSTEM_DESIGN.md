@@ -103,7 +103,12 @@ The Issue Tracker is a stateless RESTful API built with Go that provides inciden
   │  │  │  - ResetPassword│    │                 │                        │   │
   │  │  └─────────────────┘    └─────────────────┘                        │   │
 │  │                                                                     │   │
-│  │  ┌─────────────────────────────────────────────────────────────┐    │   │
+│  │  
+│  │  │  ┌─────────────────────────────────────────────────────────────┐    │   │
+│  │  │  │  incidentmanagement.go                                     │    │   │
+│  │  │  │  - IncidentManagementModel (follow-up data access)         │    │   │
+│  │  │  │  └─────────────────────────────────────────────────────────────┘    │   │
+│  │  │                                                                     │   │┌─────────────────────────────────────────────────────────────┐    │   │
 │  │  │  db.go                                                      │    │   │
 │  │  │  - InitPool()  → Creates PGX connection pool              │    │   │
 │  │  │  - NewModels() → Factory for model instances               │    │   │
