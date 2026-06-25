@@ -29,7 +29,7 @@ func (a *application) submitIncidentManagement(c *gin.Context) {
 	context := c.Request.Context()
 	incidentManagement, err = a.models.IncidentManagement.SubmitReport(context, &incidentManagement)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to perform database query"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error(err)})
 		return
 	}
 	c.JSON(http.StatusOK, incidentManagement)
