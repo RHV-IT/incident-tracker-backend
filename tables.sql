@@ -67,6 +67,17 @@ CREATE TABLE incidents (
     incident_status VARCHAR(50) NOT NULL DEFAULT 'unresolved'
 );
 
+create TABLE incident_management (
+    id SERIAL PRIMARY KEY,
+    incident_id INT UNIQUE NOT NULL REFERENCES incidents(id) ON DELETE CASCADE,
+
+    impact_on_service TEXT NOT NULL,
+    contributory_factors TEXT NOT NULL,
+    actions_taken_outcomes TEXT NOT NULL,
+    recommendations TEXT NOT NULL,
+    lessons_learned TEXT NOT NULL,    
+)
+
 -- Seed Initial Super Admin
 INSERT INTO users (name, email, password, role, department) 
 VALUES ('super admin', 'admin@example.com', '$2a$10$UQgnunKYIsM.hTWtjYooG.SPNKBqywEbOKddh1tU4tJuDiqfcn5Dm', 'superadmin', 'it');
