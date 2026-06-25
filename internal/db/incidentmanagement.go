@@ -1,6 +1,10 @@
 package db
 
-import "github.com/jackc/pgx/v5/pgxpool"
+import (
+	"context"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
 
 type IncidentManagementModel struct {
 	DB *pgxpool.Pool
@@ -37,4 +41,10 @@ type IncidentManagement struct {
 	ManagerSignature bool `json:"managerSignature" binding:"required"`
 	ManagerDesignation string `json:"managerDesignation" binding:"required"`
 	ManagerDate string `json:"managerDate" binding:"required"` // date this was filled
+}
+
+func(m *IncidentManagementModel) SubmitReport(ctx context.Context, incident *IncidentManagement) (IncidentManagement, error) {
+	var incidentManagement IncidentManagement
+
+	return incidentManagement, nil
 }
