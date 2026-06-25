@@ -186,16 +186,21 @@ func (m *IncidentsModel) FetchIncidents(ctx context.Context, limit, offset int) 
 
 func (m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset int, department string) ([]IncidentReport, int, int, error) {
 	var totalItems int
+	
+	// 1. Update the Count Query to check all three possible department matches
 	countQuery := `
 		SELECT COUNT(*) 
 		FROM incidents 
 		WHERE LOWER(TRIM(incident_ward_dept)) = LOWER(TRIM($1))
+		   OR LOWER(TRIM(patient_ward_dept)) = LOWER(TRIM($1))
+		   OR LOWER(TRIM(staff_place_of_work)) = LOWER(TRIM($1))
 	`
 	err := m.DB.QueryRow(ctx, countQuery, department).Scan(&totalItems)
 	if err != nil {
 		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
 	}
 
+	// 2. Update the main selection Query with the same OR logic
 	query := `
 		SELECT 
 			id, principal_name, principal_gender, principal_dob, principal_type, patient_id,
@@ -208,6 +213,8 @@ func (m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset in
 			reporter_info, reporter_date, severity_level, incident_status
 		FROM incidents 
 		WHERE LOWER(TRIM(incident_ward_dept)) = LOWER(TRIM($1))
+		   OR LOWER(TRIM(patient_ward_dept)) = LOWER(TRIM($1))
+		   OR LOWER(TRIM(staff_place_of_work)) = LOWER(TRIM($1))
 		ORDER BY id DESC 
 		LIMIT $2 OFFSET $3	
 	`
