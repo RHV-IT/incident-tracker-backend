@@ -115,7 +115,7 @@ func (m *IncidentManagementModel) FetchById(ctx context.Context, id int) (*Incid
 	return &incidentmanagement, nil
 }
 
-func (m *IncidentManagementModel) UpdateIncidentManagement(ctx context.Context, incidentId, userId int, updateIncident IncidentManagement) error {
+func (m *IncidentManagementModel) UpdateIncidentManagement(ctx context.Context, incidentId, userId int, updateIncident *IncidentManagement) error {
 	query := `
 	UPDATE incident_management
 SET  
@@ -185,8 +185,13 @@ WHERE incident_id = $25;`
 	INSERT INTO incident_logs
 	(incident_id, changed_by, action, old_status, new_status)
 	VALUES
-	($1, $2, $3, $4, $5);
+	($1, $2, $3, $4, $5)
+	RETURNING id;
 	`
+	_, err = m.DB.Exec(ctx, logQuery, incidentId, userId, "updated", oldstatus, updateIncident)
+	if err != nil {
+		return fmt.Errorf("database query error: %w", err)
+	}
 
 	return nil
 }
