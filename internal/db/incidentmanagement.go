@@ -196,8 +196,10 @@ WHERE incident_id = $25;`
 		if logErr != nil {
 			fmt.Printf("Asynchronous audit log failed for incident %d: %v\n", incidentId, logErr)
 			logger.ErrorFileLogger.Printf("Asynchronous audit log failed for incident %d: %v", incidentId, logErr)
+			return
 		}
 		
+		logger.UpdateIncidentLogger.Printf("Incident %d updated by user %d", incidentId, userId)
 	}(detachedCtx)
 
 

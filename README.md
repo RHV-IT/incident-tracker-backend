@@ -3,7 +3,7 @@
 A RESTful API for tracking workplace incidents and safety reports built with Go, Gin, and PostgreSQL.
 
 **Code Metrics:**
-- Total Go code: ~758 lines
+- Total Go code: 1443 lines
 - 16 Go source files
 - Architecture: Clean layered (presentation → application → data → infrastructure)
 
