@@ -144,5 +144,49 @@ SET
     manager_designation = $23, 
     manager_date = $24
 WHERE incident_id = $25;`
+
+	oldstatus, err := m.FetchById(ctx, incidentId)
+	if err != nil {
+		return fmt.Errorf("database query err: %w", err)
+	}
+
+	_, err = m.DB.Exec(ctx, query,
+		updateIncident.ImpactOnService,
+		updateIncident.ContributoryFactors,
+		updateIncident.ActionsTakenOutcomes,
+		updateIncident.Recommendations,
+		updateIncident.LessonsLearned,
+		updateIncident.InformedPatient,
+		updateIncident.InformedRelative,
+		updateIncident.InformedSeniorManager,
+		updateIncident.InformedPharmacist,
+		updateIncident.PoliceIncidentNumber,
+		updateIncident.InformedOther,
+		updateIncident.RiskSeverity,
+		updateIncident.RiskLikelihood,
+		updateIncident.RiskRating,
+		updateIncident.OhsAbsenceOver3Days,
+		updateIncident.OhsActOfViolenceOrDanger,
+		updateIncident.OhsHospitalizationOver24Hours,
+		updateIncident.OhsStaffName,
+		updateIncident.OhsStaffDob,
+		updateIncident.OhsStaffAddress,
+		updateIncident.ManagerName,
+		updateIncident.ManagerSignature,
+		updateIncident.ManagerDesignation,
+		updateIncident.ManagerDate,
+		incidentId,
+	)
+	if err != nil {
+		return fmt.Errorf("database query error: %w", err)
+	}
+
+	logQuery := `
+	INSERT INTO incident_logs
+	(incident_id, changed_by, action, old_status, new_status)
+	VALUES
+	($1, $2, $3, $4, $5);
+	`
+
 	return nil
 }

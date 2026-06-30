@@ -119,3 +119,5 @@ VALUES ('super admin', 'admin@example.com', '$2a$10$UQgnunKYIsM.hTWtjYooG.SPNKBq
 CREATE INDEX IF NOT EXISTS idx_incidents_id_desc ON incidents (id DESC);
 
 CREATE INDEX IF NOT EXISTS idx_incident_management_incident_id ON incident_management (incident_id);
+
+CREATE INDEX IF NOT EXISTS idx_incident_logs_incident_id ON incident_logs (incident_id);
