@@ -181,17 +181,23 @@ WHERE incident_id = $25;`
 		return fmt.Errorf("database query error: %w", err)
 	}
 
-	logQuery := `
-	INSERT INTO incident_logs
-	(incident_id, changed_by, action, old_value, new_value)
-	VALUES
-	($1, $2, $3, $4, $5)
-	RETURNING id;
-	`
-	_, err = m.DB.Exec(ctx, logQuery, incidentId, userId, "updated", oldvalue, updateIncident)
-	if err != nil {
-		return fmt.Errorf("database query error: %w", err)
-	}
+	detachedCtx := context.WithoutCancel(ctx)
+
+	go func(bgCtx context.Context) {
+		logQuery := `
+		INSERT INTO incident_logs
+		(incident_id, changed_by, action, old_value, new_value)
+		VALUES
+		($1, $2, $3, $4, $5)
+		RETURNING id;
+		`
+		_, logErr := m.DB.Exec(ctx, logQuery, incidentId, userId, "updated", oldvalue, updateIncident)
+		if logErr != nil {
+			fmt.Printf("Asynchronous audit log failed for incident %d: %v\n", incidentId, logErr)
+		}
+		
+	}(detachedCtx)
+
 
 	return nil
 }
