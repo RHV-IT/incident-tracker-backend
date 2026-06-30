@@ -9,8 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
-
 func (a *application) reportIncident(c *gin.Context) {
 	context := c.Request.Context()
 	var input db.IncidentReport
@@ -156,7 +154,7 @@ func (a *application) updateIncidentStatus(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Incident report not found"})
 		return
 	}
-	
+
 	// Scoped matching uses incident_ward_dept to correctly align with clinical spaces
 	incidentDept := strings.ToLower(fetchedIncident.IncidentWardDept)
 	if userRole == "supervisor" && userDepartment != incidentDept {

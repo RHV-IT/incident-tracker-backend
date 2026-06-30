@@ -186,7 +186,7 @@ func (m *IncidentsModel) FetchIncidents(ctx context.Context, limit, offset int) 
 
 func (m *IncidentsModel) FetchBySupervisor(ctx context.Context, limit, offset int, department string) ([]IncidentReport, int, int, error) {
 	var totalItems int
-	
+
 	// 1. Update the Count Query to check all three possible department matches
 	countQuery := `
 		SELECT COUNT(*) 
