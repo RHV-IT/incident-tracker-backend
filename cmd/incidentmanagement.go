@@ -71,18 +71,13 @@ func (a *application) updateIncidentManagement(c *gin.Context) {
 		return
 	}
 	var updateIncident db.IncidentManagement
-	userId := c.GetString("userId")
-	uid, err := strconv.Atoi(userId)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user id"})
-		return
-	}
+	uid := c.GetInt("userId")
 	if err := c.ShouldBindJSON(&updateIncident); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 	if err := a.models.IncidentManagement.UpdateIncidentManagement(context, incidentId, uid, &updateIncident); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid id wass passed"})
 		return
 	}
 	c.JSON(http.StatusOK, updateIncident)
