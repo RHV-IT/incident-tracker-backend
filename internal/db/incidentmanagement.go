@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"issueTracking/internal/logger"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -194,6 +195,7 @@ WHERE incident_id = $25;`
 		_, logErr := m.DB.Exec(bgCtx, logQuery, incidentId, userId, "updated", oldvalue, updateIncident)
 		if logErr != nil {
 			fmt.Printf("Asynchronous audit log failed for incident %d: %v\n", incidentId, logErr)
+			logger.ErrorFileLogger.Printf("Asynchronous audit log failed for incident %d: %v", incidentId, logErr)
 		}
 		
 	}(detachedCtx)
