@@ -2,3 +2,6 @@
 tmp/
 requirements.txt
 update.txt
+
+updateIncidents.log
+backgroundErrors.log
