@@ -61,7 +61,7 @@ func (a *application) updateIncidentManagement(c *gin.Context) {
 	userId := c.GetString("userId")
 	uid, err := strconv.Atoi(userId)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter was passed"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user id"})
 		return
 	}
 }
