@@ -3,6 +3,7 @@ package main
 import (
 	"issueTracking/internal/db"
 	"issueTracking/internal/env"
+	"issueTracking/internal/logger"
 	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,6 +18,8 @@ type application struct {
 }
 
 func main() {
+	logger.InitLogger()
+
 	pool, err := db.InitPool()
 	if err != nil {
 		log.Fatalf("Failed to initialize database connection pool: %v", err)
