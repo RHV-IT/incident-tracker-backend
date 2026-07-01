@@ -128,6 +128,93 @@ curl "http://localhost:3002/api/v1/user?email=test@example.com" -H "Authorizatio
 | supervisor | Report incidents, view own department incidents (via `incident_ward_dept`), update own department incident status |
 | reporter | Report incidents via public endpoint only, view own department incidents |
 
+## Incident Management Form
+
+The incident management report captures follow-up documentation after an incident occurs. The form includes:
+
+### Form Sections
+
+1. **Operational Evaluation Metrics**
+   - Impact on Service
+   - Contributory Factors
+   - Actions Taken / Outcomes
+   - Recommendations
+   - Lessons Learned
+
+2. **Stakeholder Notifications Log**
+   - Patient Informed
+   - Relative Informed
+   - Senior Manager Notified
+   - Pharmacist Informed
+   - Police Incident Number
+   - Other Informed Parties
+
+3. **Risk Factor Assessment**
+   - Risk Severity Score (1-5)
+   - Risk Likelihood Score (1-5)
+   - Risk Rating (auto-calculated as Severity × Likelihood)
+
+4. **Occupational Health & Safety Compliance**
+   - Staff Absence Over 3 Days
+   - Act of Violence or Peril Danger
+   - Hospitalization Over 24 Hours
+   - OHS Impacted Staff Name
+   - Staff Date of Birth
+   - Staff Home Address
+
+5. **Executive Authorization Sign-Off**
+   - Manager Name
+   - Corporate Designation
+   - Authorization Date
+   - Manager Signature (required, legally binding)
+
+### API Endpoints
+
+**POST /api/v1/incidents/:id/management** - Create management report
+- Requires: admin role
+- Request body: `IncidentManagement` struct
+
+**GET /api/v1/incidents/:id/management** - Retrieve management report
+- Requires: admin role
+- Response: `IncidentManagement` struct
+
+**PUT /api/v1/incidents/:id/management** - Update existing report
+- Requires: supervisor or admin role
+- Request body: `IncidentManagement` struct
+
+### IncidentManagement Struct
+
+```go
+type IncidentManagement struct {
+    ID                              int    `json:"id"`
+    IncidentID                      int    `json:"incidentId"`
+    ImpactOnService                 string `json:"impactOnService"`
+    ContributoryFactors             string `json:"contributoryFactors"`
+    ActionsTakenOutcomes            string `json:"actionsTakenOutcomes"`
+    Recommendations                 string `json:"recommendations"`
+    LessonsLearned                  string `json:"lessonsLearned"`
+    InformedPatient                 bool   `json:"informedPatient"`
+    InformedRelative                bool   `json:"informedRelative"`
+    InformedSeniorManager           bool   `json:"informedSeniorManager"`
+    InformedPharmacist              bool   `json:"informedPharmacist"`
+    PoliceIncidentNumber            string `json:"policeIncidentNumber"`
+    InformedOther                   string `json:"informedOther"`
+    RiskSeverity                    int    `json:"riskSeverity"`
+    RiskLikelihood                  int    `json:"riskLikelihood"`
+    RiskRating                      int    `json:"riskRating"`
+    OhsAbsenceOver3Days             bool   `json:"ohsAbsenceOver3Days"`
+    OhsActOfViolenceOrDanger        bool   `json:"ohsActOfViolenceOrDanger"`
+    OhsHospitalizationOver24Hours   bool   `json:"ohsHospitalizationOver24Hours"`
+    OhsStaffName                    string `json:"ohsStaffName"`
+    OhsStaffDob                     string `json:"ohsStaffDob"`
+    OhsStaffAddress                 string `json:"ohsStaffAddress"`
+    ManagerName                     string `json:"managerName"`
+    ManagerSignature                bool   `json:"managerSignature"`
+    ManagerDesignation              string `json:"managerDesignation"`
+    ManagerDate                     string `json:"managerDate"`
+}
+```
+
 ## Default Credentials
 
 A superadmin user is created by default:
