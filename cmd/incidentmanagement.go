@@ -17,7 +17,7 @@ func (a *application) submitIncidentManagement(c *gin.Context) {
 		return
 	}
 	if userRole != "admin" &&  userRole != "supervisor" {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized. Must be an admin"})
+		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized. Must be an admin or supervisor"})
 		return
 	}
 	var incidentManagement db.IncidentManagement
