@@ -36,11 +36,6 @@ func (a *application) submitIncidentManagement(c *gin.Context) {
 }
 
 func (a *application) getIncidentManagement(c *gin.Context) {
-	userRole := c.GetString("userRole")
-	if userRole != "admin" {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized. Must be an admin"})
-		return
-	}
 	context := c.Request.Context()
 	idParams := c.Param("id")
 	id, err := strconv.Atoi(idParams)
