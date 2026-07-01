@@ -129,7 +129,7 @@ func (a *application) getIncidents(c *gin.Context) {
 func (a *application) updateIncidentStatus(c *gin.Context) {
 	context := c.Request.Context()
 	userRole := strings.ToLower(c.GetString("userRole"))
-	if userRole == "reporter" || userRole == "supervisor" {
+	if userRole == "reporter" || userRole == "supervisor" || userRole == "manager" {
 		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to update an incident"})
 		return
 	}
