@@ -3,8 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
-	"issueTracking/internal/env"
 	"time"
+
+	"issueTracking/internal/env"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -13,6 +14,7 @@ type Models struct {
 	Users              UserModel
 	Incidents          IncidentsModel
 	IncidentManagement IncidentManagementModel
+	Comments           CommentModel
 }
 
 func NewModels(db *pgxpool.Pool) Models {
@@ -20,6 +22,7 @@ func NewModels(db *pgxpool.Pool) Models {
 		Users:              UserModel{DB: db},
 		Incidents:          IncidentsModel{DB: db},
 		IncidentManagement: IncidentManagementModel{DB: db},
+		Comments:           CommentModel{DB: db},
 	}
 }
 
