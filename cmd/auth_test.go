@@ -91,8 +91,14 @@ func TestLoginRoute(t *testing.T) {
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	var loggedInUser map[string]any
-	err = json.Unmarshal(w.Body.Bytes(), &loggedInUser)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
-	assert.Equal(t, "testuser@example.com", loggedInUser["email"])
+
+	userMap, ok := response["user"].(map[string]any)
+	assert.True(t, ok, "Response should contain a nested 'user' object")
+
+	assert.Equal(t, "testuser@example.com", userMap["email"])
+
+	assert.NotEmpty(t, response["token"], "response should contain a JWT token")
 }
