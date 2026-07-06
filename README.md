@@ -3,8 +3,8 @@
 A RESTful API for tracking workplace incidents and safety reports built with Go, Gin, and PostgreSQL.
 
 **Code Metrics:**
-- Total Go code: 1570 lines
-- 19 Go source files
+- Total Go code: 1797 lines
+- 21 Go source files
 - Architecture: Clean layered (presentation → application → data → infrastructure)
 
 ## Overview
@@ -327,6 +327,16 @@ All user management endpoints require superadmin role and authentication middlew
      - `403 Forbidden`: User is not a manager or admin
      - `400 Bad Request`: Invalid input data
      - `500 Internal Server Error`: Database error
+
+#### List Comments
+
+- `GET /api/v1/incidents/comments` - Retrieve comments for an incident
+   - **Requires**: admin role
+   - **Query Parameters**:
+     - `incidentId`: Incident ID (required)
+   - **Responses**:
+     - `200 OK`: List of comments
+     - `403 Forbidden`: User is not an admin
 
 #### Submit Incident Management Report
 

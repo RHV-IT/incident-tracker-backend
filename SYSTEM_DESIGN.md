@@ -1,6 +1,6 @@
 # Issue Tracker - System Design
 
-**Code Metrics:** 1570 lines of Go, 19 source files
+**Code Metrics:** 1797 lines of Go, 21 source files
 
 ## System Overview
 

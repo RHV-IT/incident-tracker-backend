@@ -5,8 +5,8 @@
 The Issue Tracker is a RESTful API for managing workplace incidents and safety reports built with Go, Gin, and PostgreSQL.
 
 **Code Metrics:**
-- Total Go code: 1570 lines
-- 19 Go source files
+- Total Go code: 1797 lines
+- 21 Go source files
 - Architecture: Clean layered (presentation → application → data → infrastructure)
 
 ## Development Commands
@@ -20,6 +20,8 @@ go run ./cmd/
 
 # Run tests
 go test ./...
+# Or for verbose output:
+./scripts/runtests.sh
 
 # Format code
 go fmt ./...
@@ -123,14 +125,17 @@ curl -X PATCH http://localhost:3002/api/v1/incidents/1/status \
 
 # Get user info (requires auth)
 curl "http://localhost:3002/api/v1/user?email=test@example.com" -H "Authorization: Bearer $TOKEN"
+
+# Get comments for incident (requires admin)
+curl "http://localhost:3002/api/v1/incidents/comments?incidentId=1" -H "Authorization: Bearer $TOKEN"
 ```
 
 ## Role Permissions
 
 | Role | Permissions |
 |------|-------------|
-| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update any incident status, submit incident management reports, add comments |
-| admin | Report incidents, view all incidents, update any incident status, submit incident management reports, add comments |
+| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update any incident status, submit incident management reports, add comments, view comments |
+| admin | Report incidents, view all incidents, update any incident status, submit incident management reports, add comments, view comments |
 | supervisor | Report incidents, view own department incidents (via `incident_ward_dept`), update own department incident status |
 | manager | Add comments, submit incident management reports, view all incidents |
 | reporter | Report incidents via public endpoint only, view own department incidents |

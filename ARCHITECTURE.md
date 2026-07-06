@@ -1,6 +1,6 @@
 # Issue Tracker Architecture
 
-**Code Metrics:** 1570 lines of Go, 19 source files
+**Code Metrics:** 1797 lines of Go, 21 source files
 
 Go version: 1.22+
 
@@ -163,9 +163,10 @@ HTTP Request → Gin Router → Middleware (if applicable) → Handler → Valid
 ## Current Implementation Status
 
 **Code Metrics:**
-- Total Go code: 1570 lines
-- 19 Go source files
+- Total Go code: 1797 lines
+- 21 Go source files
 - Logger already implemented in `internal/logger/logger.go`
+- Test helpers implemented in `internal/db/testhelpers.go`
 
 **Implemented Features:**
 - User authentication with JWT (72-hour expiry)
