@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 )
@@ -26,7 +27,11 @@ func SetupTestDB(t *testing.T) *pgxpool.Pool {
 	t.Cleanup(func() { pgContainer.Terminate(ctx) })
 
 	connStr, _ := pgContainer.ConnectionString(ctx, "sslmode=disable")
-	pool, err := pgxpool.New(ctx, connStr)
+	config, err := pgxpool.ParseConfig(connStr)
+	assert.NoError(t, err)
+	config.MaxConns = 10
+	config.MinConns = 2
+	pool, err := pgxpool.NewWithConfig(ctx, config)
 	require.NoError(t, err)
 
 	var pingErr error
