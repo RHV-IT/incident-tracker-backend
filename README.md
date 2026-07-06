@@ -3,8 +3,8 @@
 A RESTful API for tracking workplace incidents and safety reports built with Go, Gin, and PostgreSQL.
 
 **Code Metrics:**
-- Total Go code: 1451 lines
-- 16 Go source files
+- Total Go code: 1570 lines
+- 19 Go source files
 - Architecture: Clean layered (presentation → application → data → infrastructure)
 
 ## Overview
@@ -28,23 +28,24 @@ The Issue Tracker is a web application designed to help organizations (particula
   - Automatic audit logging for incident updates (stored in `incident_logs` table)
 
 - **Incident Management**
-  - Report new incidents via public endpoint (no auth required)
-  - Comprehensive 37-field clinical incident form
-  - Track incident severity levels (Near Miss, Minor, Major, Critical)
-  - Track incident lifecycle status (Unresolved → In Progress → Resolved)
-  - Principal person involved details (patient, staff, consultant, other)
-  - Witness information (names, types, departments, contact)
-  - Equipment involvement tracking (models, serial numbers, disposition)
-  - Treatment received and prescribing doctor fields
+   - Report new incidents via public endpoint (no auth required)
+   - Comprehensive 37-field clinical incident form
+   - Track incident severity levels (Near Miss, Minor, Major, Critical)
+   - Track incident lifecycle status (Unresolved → In Progress → Resolved)
+   - Principal person involved details (patient, staff, consultant, other)
+   - Witness information (names, types, departments, contact)
+   - Equipment involvement tracking (models, serial numbers, disposition)
+   - Treatment received and prescribing doctor fields
    - Reporter details section (name, designation, signature, date)
    - Paginated incident listing with metadata
-   - Follow-up incident management reports (admin only)
+   - Follow-up incident management reports (admin/manager only)
+   - Comments on incidents (manager/admin only)
 
 - **Role-Based Access Control**
-  - Four distinct roles: Reporter, Supervisor, Admin, Superadmin
-  - Role-based endpoint protection via JWT middleware
-  - Department-based data scoping for supervisors and reporters
-  - Superadmin privileges for user management
+   - Five distinct roles: Reporter, Supervisor, Manager, Admin, Superadmin
+   - Role-based endpoint protection via JWT middleware
+   - Department-based data scoping for supervisors and reporters
+   - Superadmin privileges for user management
 
 - **Development Experience**
   - Docker Compose setup for easy development
@@ -112,7 +113,7 @@ The Issue Tracker is a web application designed to help organizations (particula
       "email": "string (required)",
       "name": "string (required)",
       "password": "string (required, min 8 characters)",
-      "role": "string (required, one of: reporter, supervisor, admin, superadmin)",
+      "role": "string (required, one of: reporter, supervisor, manager, admin, superadmin)",
       "department": "string (required)"
     }
     ```
@@ -163,7 +164,7 @@ All user management endpoints require superadmin role and authentication middlew
     {
       "email": "string (required)",
       "name": "string (required)",
-      "role": "string (required, one of: reporter, supervisor, admin, superadmin)",
+      "role": "string (required, one of: reporter, supervisor, manager, admin, superadmin)",
       "department": "string (required)"
     }
     ```
@@ -238,18 +239,18 @@ All user management endpoints require superadmin role and authentication middlew
       "causes": "string (required)",
       "prescribingDoctor": "string (optional)",
       "treatmentReceived": "string (required)",
-      "equipmentInvolved": "boolean (required)",
+      "equipmentInvolved": "string (required)",
       "equipmentModel": "string (optional)",
       "equipmentSentForRepair": "boolean (required)",
       "equipmentWithdrawn": "boolean (required)",
       "equipmentRetained": "boolean (required)",
       "equipmentNumber": "string (optional)",
-      "isMedicalDevice": "boolean (required)",
+      "isMedicalDevice": "string (optional)",
       "reporterName": "string (required)",
       "reporterDesignation": "string (required)",
       "signature": "boolean (required)",
       "reporterInfo": "string (required)",
-      "reporterDate": "string (required)",
+      "date": "string (required)",
       "severityLevel": "string (required, one of: near miss, minor, major, critical)",
       "incidentStatus": "string (optional, one of: unresolved, inprogress, resolved, defaults to unresolved)"
     }
@@ -264,8 +265,8 @@ All user management endpoints require superadmin role and authentication middlew
 - `GET /api/v1/incidents` - Retrieve paginated list of incidents
   - **Requires**: Authentication (any authenticated user)
   - **Role-specific behavior**:
-    - `superadmin` / `admin`: See all incidents
-    - `supervisor` / `reporter`: See only incidents from their department (matched via `incident_ward_dept`)
+     - `superadmin` / `admin` / `manager`: See all incidents
+     - `supervisor` / `reporter`: See only incidents from their department (matched via `incident_ward_dept`)
   - **Query Parameters**:
     - `page`: Page number (default: 1)
     - `limit`: Number of items per page (default: 10, max: 50)
@@ -298,9 +299,8 @@ All user management endpoints require superadmin role and authentication middlew
     }
     ```
   - **Role-specific behavior**:
-    - `reporter`: Forbidden (403)
-    - `supervisor`: Can only update incidents in their department (matched via `incident_ward_dept`)
-    - `admin` / `superadmin`: Can update any incident
+     - `reporter` / `supervisor` / `manager`: Forbidden (403)
+     - `admin` / `superadmin`: Can update any incident
   - **Responses**:
     - `200 OK`: Status updated successfully (returns updated incident)
     - `400 Bad Request`: Invalid ID or invalid status value
@@ -309,10 +309,28 @@ All user management endpoints require superadmin role and authentication middlew
    - `404 Not Found`: Incident not found
      - `500 Internal Server Error`: Database error
 
+#### Add Comment
+
+- `POST /api/v1/incidents/comments` - Add a comment to an incident
+   - **Requires**: manager or admin role
+   - **Request Body**:
+     ```json
+     {
+       "incidentId": "integer (required)",
+       "userId": "integer (required)",
+       "comment": "string (required)"
+     }
+     ```
+   - **Responses**:
+     - `201 Created`: Comment successfully added
+     - `403 Forbidden`: User is not a manager or admin
+     - `400 Bad Request`: Invalid input data
+     - `500 Internal Server Error`: Database error
+
 #### Submit Incident Management Report
 
 - `POST /api/v1/incidents/:id/management` - Submit a follow-up management report for an incident
-  - **Requires**: admin role
+   - **Requires**: admin or manager role
   - **Path Parameters**:
     - `id`: Incident ID (required)
   - **Request Body** (see full IncidentManagement schema below):
@@ -405,9 +423,10 @@ All user management endpoints require superadmin role and authentication middlew
 
 | Role       | Permissions                                                                                                                                                         |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update incident status, submit incident management reports |
-| admin      | Report incidents, view all incidents, update incident status, submit incident management reports                                                                    |
+| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update incident status, submit incident management reports, add comments |
+| admin      | Report incidents, view all incidents, update incident status, submit incident management reports, add comments                                                                    |
 | supervisor | Report incidents, view own department incidents, update own department incidents                                                                                    |
+| manager    | Add comments, submit incident management reports, view all incidents |
 | reporter   | Report incidents via public endpoint only, view own department incidents                                                                                            |
 
 ## Database Schema
@@ -424,7 +443,7 @@ Stores user account information:
 | name       | VARCHAR(255) | NOT NULL                    | User's full name                                    |
 | email      | VARCHAR(255) | UNIQUE NOT NULL             | User's email address (used for login)               |
 | password   | VARCHAR(255) | NOT NULL                    | Bcrypt hashed password                              |
-| role       | VARCHAR(50)  | NOT NULL DEFAULT 'reporter' | User role (reporter, supervisor, admin, superadmin) |
+| role       | VARCHAR(50)  | NOT NULL DEFAULT 'reporter' | User role (reporter, supervisor, manager, admin, superadmin) |
 | department | VARCHAR(100) | NOT NULL                    | User's department                                   |
 | disabled   | BOOLEAN      | NOT NULL DEFAULT FALSE      | Account status (true = disabled)                    |
 
@@ -521,6 +540,19 @@ Stores follow-up incident management data linked to incidents:
 
 **Index**: `idx_incident_management_incident_id` on `incident_management(incident_id)`.
 
+### Comments Table
+
+Stores comments linked to incidents:
+
+| Column | Type | Constraints | Description |
+| ------ | ---- | ----------- | ----------- |
+| id | SERIAL | PRIMARY KEY | Auto-incrementing unique identifier |
+| incident_id | INT | REFERENCES incidents(id) ON DELETE CASCADE | Linked incident |
+| user_id | INT | REFERENCES users(id) ON DELETE CASCADE | Comment author |
+| comment | TEXT | | Comment content |
+
+**Index**: `idx_comment` on `comments(id)`.
+
 ## Project Structure
 
 ```
@@ -549,6 +581,7 @@ Stores follow-up incident management data linked to incidents:
 │
 ├── cmd/                               # Application entrypoint and HTTP handlers
 │   ├── auth.go                        # Authentication handlers (register, login, reset password)
+│   ├── comments.go                    # Comment handlers (add comment to incidents)
 │   ├── incidents.go                   # Incident handlers (report, get, update status)
 │   ├── incidentmanagement.go          # Incident management handler (submit follow-up report)
 │   ├── main.go                        # Application initialization
@@ -561,12 +594,15 @@ Stores follow-up incident management data linked to incidents:
 │
 ├── internal/                          # Private application libraries
 │   ├── db/                            # Database models and connection handling
+│   │   ├── comments.go                # Comment model + CRUD queries
 │   │   ├── db.go                      # Connection pool initialization, Models factory
-│   │   ├── incidents.go               # Incident model + CRUD queries
 │   │   ├── incidentmanagement.go      # Incident management model (follow-up data)
+│   │   ├── incidents.go               # Incident model + CRUD queries
 │   │   └── users.go                   # User model + CRUD queries
-│   └── env/                           # Environment variable helpers
-│       └── env.go
+│   ├── env/                           # Environment variable helpers
+│   │   └── env.go
+│   └── logger/                        # Structured logging
+│       └── logger.go
 │
 └── tmp/                               # Temporary directory (used by Air for builds)
 ```

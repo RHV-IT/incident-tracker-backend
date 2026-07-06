@@ -1,6 +1,6 @@
 # Issue Tracker Architecture
 
-**Code Metrics:** 1451 lines of Go, 16 source files
+**Code Metrics:** 1570 lines of Go, 19 source files
 
 Go version: 1.22+
 
@@ -17,14 +17,15 @@ The Issue Tracker is a layered RESTful API built with Go that follows a clean se
 Components:
 - **Route Definitions** (`routes.go`): Maps HTTP endpoints to handler functions, configures CORS
 - **HTTP Handlers**: Process requests and return responses:
-  - `auth.go`: Authentication endpoints (register, login, reset password)
-  - `users.go`: User management endpoints (update, disable, enable, get user)
-  - `incidents.go`: Incident handlers (public report, authenticated list with dept scoping, status update)
-  - `main.go`: Application entrypoint and initialization
-  - `server.go`: HTTP server configuration (timeouts)
-  - `types.go`: Request/response DTOs, JWT Claims, pagination types
-  - `utils.go`: Utility functions (bcrypt password hashing)
-  - `middleware.go`: JWT authentication middleware
+   - `auth.go`: Authentication endpoints (register, login, reset password)
+   - `comments.go`: Comment handlers (add comment to incidents)
+   - `users.go`: User management endpoints (update, disable, enable, get user)
+   - `incidents.go`: Incident handlers (public report, authenticated list with dept scoping, status update)
+   - `main.go`: Application entrypoint and initialization
+   - `server.go`: HTTP server configuration (timeouts)
+   - `types.go`: Request/response DTOs, JWT Claims, pagination types
+   - `utils.go`: Utility functions (bcrypt password hashing)
+   - `middleware.go`: JWT authentication middleware
 
 ### 2. Application Layer
 **Location**: Implicit in handler functions
@@ -43,9 +44,10 @@ The application layer is implemented directly within the handler functions, whic
 Components:
 - **Database Connection** (`db.go`): Manages PostgreSQL connection pool
 - **Data Models**:
-  - `users.go`: User model with CRUD operations
-  - `incidents.go`: Incident model with CRUD operations
-  - `incidentmanagement.go`: Incident management model (follow-up actions, risk assessment, OHS details)
+   - `users.go`: User model with CRUD operations
+   - `comments.go`: Comment model with CRUD operations
+   - `incidents.go`: Incident model with CRUD operations
+   - `incidentmanagement.go`: Incident management model (follow-up actions, risk assessment, OHS details)
 - **Model Factory** (`db.go`): `NewModels()` function creates model instances
 
 ### 4. Infrastructure Layer
@@ -161,15 +163,16 @@ HTTP Request → Gin Router → Middleware (if applicable) → Handler → Valid
 ## Current Implementation Status
 
 **Code Metrics:**
-- Total Go code: 1451 lines
-- 16 Go source files
+- Total Go code: 1570 lines
+- 19 Go source files
 - Logger already implemented in `internal/logger/logger.go`
 
 **Implemented Features:**
 - User authentication with JWT (72-hour expiry)
-- Role-based access control (superadmin, admin, supervisor, reporter)
+- Role-based access control (superadmin, admin, supervisor, manager, reporter)
 - Department-scoped incident access
 - Incident management follow-up reports
+- Incident comments
 - Health check endpoint
 - CORS configuration
 - Database connection pooling

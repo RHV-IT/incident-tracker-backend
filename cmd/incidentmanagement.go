@@ -16,7 +16,7 @@ func (a *application) submitIncidentManagement(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter was passed"})
 		return
 	}
-	if userRole != "admin" &&  userRole != "manager" {
+	if userRole != "admin" && userRole != "manager" {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized. Must be an admin or supervisor"})
 		return
 	}

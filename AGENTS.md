@@ -5,8 +5,8 @@
 The Issue Tracker is a RESTful API for managing workplace incidents and safety reports built with Go, Gin, and PostgreSQL.
 
 **Code Metrics:**
-- Total Go code: 1451 lines
-- 16 Go source files
+- Total Go code: 1570 lines
+- 19 Go source files
 - Architecture: Clean layered (presentation → application → data → infrastructure)
 
 ## Development Commands
@@ -93,23 +93,29 @@ curl -X POST http://localhost:3002/api/v1/incidents \
     "causes": "Wet floor",
     "prescribingDoctor": "Dr. Brown",
     "treatmentReceived": "First Aid",
-    "equipmentInvolved": false,
+    "equipmentInvolved": "No",
     "equipmentSentForRepair": false,
     "equipmentWithdrawn": false,
     "equipmentRetained": false,
-    "isMedicalDevice": false,
+    "isMedicalDevice": "No",
     "reporterName": "Jane Reporter",
     "reporterDesignation": "Nurse",
     "signature": true,
     "reporterInfo": "jane@example.com",
-    "reporterDate": "2026-06-09",
+    "date": "2026-06-09",
     "severityLevel": "minor"
   }'
+
+# Add comment to incident (requires manager or admin)
+curl -X POST http://localhost:3002/api/v1/incidents/comments \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"incidentId": 1, "userId": 2, "comment": "Follow up needed"}'
 
 # Get incidents (requires auth)
 curl http://localhost:3002/api/v1/incidents -H "Authorization: Bearer $TOKEN"
 
-# Update incident status (requires auth; reporter role forbidden)
+# Update incident status (requires auth; reporter/supervisor/manager roles forbidden)
 curl -X PATCH http://localhost:3002/api/v1/incidents/1/status \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
@@ -123,9 +129,10 @@ curl "http://localhost:3002/api/v1/user?email=test@example.com" -H "Authorizatio
 
 | Role | Permissions |
 |------|-------------|
-| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update any incident status, submit incident management reports |
-| admin | Report incidents, view all incidents, update any incident status, submit incident management reports |
+| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update any incident status, submit incident management reports, add comments |
+| admin | Report incidents, view all incidents, update any incident status, submit incident management reports, add comments |
 | supervisor | Report incidents, view own department incidents (via `incident_ward_dept`), update own department incident status |
+| manager | Add comments, submit incident management reports, view all incidents |
 | reporter | Report incidents via public endpoint only, view own department incidents |
 
 ## Incident Management Form
@@ -152,7 +159,7 @@ The incident management report captures follow-up documentation after an inciden
 3. **Risk Factor Assessment**
    - Risk Severity Score (1-5)
    - Risk Likelihood Score (1-5)
-   - Risk Rating (auto-calculated as Severity × Likelihood)
+   - Risk Rating (submitted value; typically Severity × Likelihood)
 
 4. **Occupational Health & Safety Compliance**
    - Staff Absence Over 3 Days
@@ -171,7 +178,7 @@ The incident management report captures follow-up documentation after an inciden
 ### API Endpoints
 
 **POST /api/v1/incidents/:id/management** - Create management report
-- Requires: admin role
+- Requires: admin or manager role
 - Request body: `IncidentManagement` struct
 
 **GET /api/v1/incidents/:id/management** - Retrieve management report

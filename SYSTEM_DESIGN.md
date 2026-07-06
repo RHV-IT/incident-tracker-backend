@@ -1,6 +1,6 @@
 # Issue Tracker - System Design
 
-**Code Metrics:** 1451 lines of Go, 16 source files
+**Code Metrics:** 1570 lines of Go, 19 source files
 
 ## System Overview
 
@@ -350,9 +350,10 @@ Client Request
 
 | Role | Permissions |
 |------|-------------|
-| **superadmin** | User management (register, update, disable/enable, reset password), report incidents, view all incidents, get user info, update any incident status |
-| **admin** | Report incidents, view all incidents, update any incident status |
+| **superadmin** | User management (register, update, disable/enable, reset password), report incidents, view all incidents, get user info, update any incident status, add comments |
+| **admin** | Report incidents, view all incidents, update any incident status, add comments |
 | **supervisor** | Report incidents, view own department incidents (via `incident_ward_dept`), update own department incident status |
+| **manager** | Add comments, submit incident management reports, view all incidents |
 | **reporter** | Report incidents via public endpoint only, view own department incidents |
 
 ## Deployment Architecture
@@ -427,9 +428,10 @@ Client Request
 **Implemented:**
 - ✅ Clean layered architecture (presentation → application → data → infrastructure)
 - ✅ JWT authentication with 72-hour expiry
-- ✅ Role-based access control (superadmin, admin, supervisor, reporter)
+- ✅ Role-based access control (superadmin, admin, supervisor, manager, reporter)
 - ✅ Department-scoped incident access
 - ✅ Incident management follow-up reports
+- ✅ Incident comments
 - ✅ Structured logging (`internal/logger`)
 - ✅ Health check endpoint (`/api/v1/ping`)
 - ✅ CORS configuration

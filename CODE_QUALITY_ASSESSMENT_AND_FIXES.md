@@ -3,7 +3,7 @@
 **Assessment Date:** June 9, 2026  
 **Repository:** issueTracking  
 **Language:** Go (98.2%)  
-**Code Metrics:** 1451 lines of Go, 16 source files
+**Code Metrics:** 1570 lines of Go, 19 source files
 **Overall Rating:** 6.5/10
 **Go Version:** 1.22+
 
@@ -381,7 +381,7 @@ func Load() (*Config, error) {
 **Current Problem:**
 ```go
 // Manual validation repeated
-if roleClean != "reporter" && roleClean != "supervisor" && roleClean != "admin" && roleClean != "superadmin" {
+if roleClean != "reporter" && roleClean != "supervisor" && roleClean != "admin" && roleClean != "superadmin" && roleClean != "manager" {
     c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role specified"})
 }
 ```

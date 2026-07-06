@@ -198,10 +198,9 @@ WHERE incident_id = $25;`
 			logger.ErrorFileLogger.Printf("Asynchronous audit log failed for incident %d: %v", incidentId, logErr)
 			return
 		}
-		
+
 		logger.UpdateIncidentLogger.Printf("Incident %d updated by user %d", incidentId, userId)
 	}(detachedCtx)
-
 
 	return nil
 }
