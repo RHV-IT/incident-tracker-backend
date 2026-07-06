@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"issueTracking/internal/logger"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -29,6 +31,10 @@ func (m *CommentModel) InsertComment(ctx context.Context, comment *Comment) erro
 	if err != nil {
 		return fmt.Errorf("database execution error: %v", err)
 	}
+
+	go func() {
+		logger.CommentLogger.Printf("Comment was made by user: %d", comment.UserId)
+	}()
 
 	return nil
 }
