@@ -86,7 +86,7 @@ func TestLoginRoute(t *testing.T) {
 	jsonBody, _ := json.Marshal(payload)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/api/v1/login", bytes.NewBuffer(jsonBody))
+	req, _ := http.NewRequest("POST", "/api/v1/auth/login", bytes.NewBuffer(jsonBody))
 
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
