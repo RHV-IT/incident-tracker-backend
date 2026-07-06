@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -71,6 +72,11 @@ func TestLoginRoute(t *testing.T) {
 		models:  db.NewModels(testPool),
 	}
 
+	hashedPassword, _ := HashPassword("supersecurepassword123")
+	ctx := context.Background()
+	_, err := app.models.Users.Insert(ctx, "testuse", "testuser@example.com", hashedPassword, "admin", "IT")
+	assert.NoError(t, err, "Failed to preseed test user")
+
 	r := app.routes()
 	payload := map[string]string{
 		"email":    "testuser@example.com",
@@ -86,7 +92,7 @@ func TestLoginRoute(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	var loggedInUser map[string]any
-	err := json.Unmarshal(w.Body.Bytes(), &loggedInUser)
+	err = json.Unmarshal(w.Body.Bytes(), &loggedInUser)
 	assert.NoError(t, err)
 	assert.Equal(t, "testuser@example.com", loggedInUser["email"])
 }
