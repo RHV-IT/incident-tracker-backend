@@ -30,7 +30,7 @@ func (a *application) addComment(c *gin.Context) {
 
 func (a *application) getComments(c *gin.Context) {
 	userRole := c.GetString("userRole")
-	if userRole != "admin" {
+	if userRole != "admin" && userRole != "manager" {
 		c.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to view incident comments"})
 		return
 	}
