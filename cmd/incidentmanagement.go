@@ -79,6 +79,7 @@ func (a *application) updateIncidentManagement(c *gin.Context) {
 }
 
 func (a *application) getIncidentLogs(c *gin.Context) {
+	ctx := c.Request.Context()
 	userRole := c.GetString("userRole")
 	incidentId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -89,4 +90,9 @@ func (a *application) getIncidentLogs(c *gin.Context) {
 	}
 
 	incidentManagementLogs, err := a.models.IncidentManagement.GetIncidentManagementLogs(ctx, incidentId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"incidentLogs": incidentManagementLogs})
 }

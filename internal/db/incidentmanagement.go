@@ -216,5 +216,28 @@ WHERE incident_id = $25;`
 	return nil
 }
 
-func (m *IncidentManagementModel) GetIncidentManagementLogs(ctx context.Context, incidentId int) {
+func (m *IncidentManagementModel) GetIncidentManagementLogs(ctx context.Context, incidentId int) ([]IncidentManagementLogs, error) {
+	query := `
+		SELECT incident_logs.*, user.name
+		FROM incident_logs INNER JOIN users ON incident_logs.changed_by=users.id
+		WHERE incident_logs.id = $1 
+	`
+	rows, err := m.DB.Query(ctx, query, incidentId)
+	if err != nil {
+		return nil, fmt.Errorf("database query error: %v", err)
+	}
+	defer rows.Close()
+
+	var IncidentLogs []IncidentManagementLogs
+	for rows.Next() {
+		var inc IncidentManagementLogs
+		err := rows.Scan(&inc.Id, &inc.IncidentId, &inc.ChangedBy, &inc.Action, &inc.OldValue, &inc.NewValue, &inc.CreatedAt)
+		if err != nil {
+			return nil, fmt.Errorf("database query error: %v", err)
+		}
+
+		IncidentLogs = append(IncidentLogs, inc)
+	}
+
+	return IncidentLogs, nil
 }
