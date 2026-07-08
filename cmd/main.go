@@ -6,6 +6,8 @@ import (
 	"issueTracking/internal/logger"
 	"log"
 
+	"github.com/joho/godotenv"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -19,6 +21,8 @@ type application struct {
 
 func main() {
 	logger.InitLogger()
+
+	_ = godotenv.Load()
 
 	pool, err := db.InitPool()
 	if err != nil {
@@ -34,5 +38,4 @@ func main() {
 		origins:   env.GetEnvString("allowedOrigins", "http://localhost:3000,http://192.168.9.227:3000"),
 	}
 	app.serve()
-
 }
