@@ -70,5 +70,5 @@ func TestGetIncidentLogsInvalidRole(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 
-	assert.Equal(t, "you are not allowed to view incident change logs", response["array"])
+	assert.Equal(t, "you are not allowed to view incident change logs", response["error"])
 }
