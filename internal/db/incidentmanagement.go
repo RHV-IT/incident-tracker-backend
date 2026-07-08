@@ -54,6 +54,7 @@ type IncidentManagementLogs struct {
 	OldValue   IncidentManagement `json:"oldValue"`
 	NewValue   IncidentManagement `json:"newValue"`
 	CreatedAt  string             `json:"createdAt"`
+	UserName   string             `json:"userName"`
 }
 
 func (m *IncidentManagementModel) SubmitReport(ctx context.Context, incident *IncidentManagement) (IncidentManagement, error) {
@@ -218,9 +219,9 @@ WHERE incident_id = $25;`
 
 func (m *IncidentManagementModel) GetIncidentManagementLogs(ctx context.Context, incidentId int) ([]IncidentManagementLogs, error) {
 	query := `
-		SELECT incident_logs.*, user.name
+		SELECT incident_logs.*, users.name
 		FROM incident_logs INNER JOIN users ON incident_logs.changed_by=users.id
-		WHERE incident_logs.id = $1 
+		WHERE incident_logs.incident_id = $1 
 	`
 	rows, err := m.DB.Query(ctx, query, incidentId)
 	if err != nil {
@@ -231,12 +232,16 @@ func (m *IncidentManagementModel) GetIncidentManagementLogs(ctx context.Context,
 	var IncidentLogs []IncidentManagementLogs
 	for rows.Next() {
 		var inc IncidentManagementLogs
-		err := rows.Scan(&inc.Id, &inc.IncidentId, &inc.ChangedBy, &inc.Action, &inc.OldValue, &inc.NewValue, &inc.CreatedAt)
+		err := rows.Scan(&inc.Id, &inc.IncidentId, &inc.ChangedBy, &inc.Action, &inc.OldValue, &inc.NewValue, &inc.CreatedAt, &inc.UserName)
 		if err != nil {
 			return nil, fmt.Errorf("database query error: %v", err)
 		}
 
 		IncidentLogs = append(IncidentLogs, inc)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("database row iteration error: %v", err)
 	}
 
 	return IncidentLogs, nil
