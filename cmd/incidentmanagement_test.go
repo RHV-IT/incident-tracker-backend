@@ -14,9 +14,9 @@ import (
 )
 
 func TestGetIncidentLogsInvalidId(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	db.TruncateTables(t, testPool)
 
-	testPool := db.SetupTestDB(t)
+	gin.SetMode(gin.TestMode)
 
 	a := &application{
 		origins: "*",
@@ -45,9 +45,9 @@ func TestGetIncidentLogsInvalidId(t *testing.T) {
 }
 
 func TestGetIncidentLogsInvalidRole(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	db.TruncateTables(t, testPool)
 
-	testPool := db.SetupTestDB(t)
+	gin.SetMode(gin.TestMode)
 
 	a := &application{
 		origins: "*",
@@ -75,9 +75,9 @@ func TestGetIncidentLogsInvalidRole(t *testing.T) {
 }
 
 func TestGetIncidentLogsSuccess(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	db.TruncateTables(t, testPool)
 
-	testPool := db.SetupTestDB(t)
+	gin.SetMode(gin.TestMode)
 
 	a := &application{
 		origins: "*",
@@ -102,5 +102,5 @@ func TestGetIncidentLogsSuccess(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
 
-	fmt.Println(response["inicidentLogs"])
+	fmt.Println(response["incidentLogs"])
 }

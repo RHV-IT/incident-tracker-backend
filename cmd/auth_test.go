@@ -4,11 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"issueTracking/internal/db"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -30,9 +29,9 @@ func mockAuthMiddleware(role string) gin.HandlerFunc {
 }
 
 func TestRegisterRoute(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	db.TruncateTables(t, testPool)
 
-	testPool := db.SetupTestDB(t)
+	gin.SetMode(gin.TestMode)
 
 	app := &application{
 		origins: "*",
@@ -63,9 +62,9 @@ func TestRegisterRoute(t *testing.T) {
 }
 
 func TestLoginSuccess(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	db.TruncateTables(t, testPool)
 
-	testPool := db.SetupTestDB(t)
+	gin.SetMode(gin.TestMode)
 
 	app := &application{
 		origins: "*",
@@ -104,9 +103,9 @@ func TestLoginSuccess(t *testing.T) {
 }
 
 func TestLoginFail(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	db.TruncateTables(t, testPool)
 
-	testPool := db.SetupTestDB(t)
+	gin.SetMode(gin.TestMode)
 
 	app := &application{
 		origins: "*",
@@ -136,9 +135,9 @@ func TestLoginFail(t *testing.T) {
 }
 
 func TestLoginInvalidCredentials(t *testing.T) {
-	gin.SetMode(gin.TestMode)
+	db.TruncateTables(t, testPool)
 
-	testPool := db.SetupTestDB(t)
+	gin.SetMode(gin.TestMode)
 
 	a := &application{
 		origins: "*",
