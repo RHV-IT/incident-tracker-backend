@@ -18,4 +18,6 @@ func TestReportIncident(t *testing.T) {
 	}
 
 	r := gin.Default()
+
+	r.POST("/api/v1/incidents", a.reportIncident)
 }
