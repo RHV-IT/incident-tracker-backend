@@ -1,6 +1,6 @@
-# Issue Tracker
+# Incident Tracker
 
-A RESTful API for tracking workplace incidents and safety reports built with Go, Gin, and PostgreSQL.
+A RESTful API for managing workplace incidents and safety reports built with Go, Gin, and PostgreSQL.
 
 **Code Metrics:**
 - Total Go code: ~1800 lines
@@ -9,7 +9,7 @@ A RESTful API for tracking workplace incidents and safety reports built with Go,
 
 ## Overview
 
-The Issue Tracker is a web application designed to help organizations (particularly healthcare settings) track and manage workplace incidents, safety reports, and clinical events. It provides user authentication, role-based access control, department-based scoping, and comprehensive incident reporting with structured clinical data.
+The Incident Tracker is a web application designed to help organizations (particularly healthcare settings) track and manage workplace incidents, safety reports, and clinical events. It provides user authentication, role-based access control, comprehensive incident reporting, and incident management follow-up documentation.
 
 ## Features
 
@@ -332,7 +332,7 @@ All user management endpoints require superadmin role and authentication middlew
       "witnessType": "string (optional)",
       "witnessWardDept": "string (optional)",
       "witnessJobTitle": "string (optional)",
-      "witenssPhone": "string (optional)", -- Preserved frontend JSON tag typo
+      "witenssPhone": "string (optional)",
       "isNearMiss": "boolean (required)",
       "causeGroup": "string (required)",
       "causes": "string (required)",
@@ -388,7 +388,7 @@ All user management endpoints require superadmin role and authentication middlew
 #### Update Incident Status
 
 - `PATCH /api/v1/incidents/:id/status` - Update incident status
-  - **Requires**: Authentication (any authenticated user except reporter)
+  - **Requires**: Authentication (admin/superadmin only)
   - **Path Parameters**:
     - `id`: Incident ID (required)
   - **Request Body**:
@@ -477,8 +477,6 @@ All user management endpoints require superadmin role and authentication middlew
     - `403 Forbidden`: User is not an admin
     - `500 Internal Server Error`: Database error
 
-### Incident Management Endpoints
-
 #### Get Incident Management Report
 
 - `GET /api/v1/incidents/:id/management` - Get management report for an incident
@@ -528,19 +526,30 @@ All user management endpoints require superadmin role and authentication middlew
     - `403 Forbidden`: User is not a supervisor or admin
     - `500 Internal Server Error`: Database error
 
+#### Get Incident Management Logs
+
+- `GET /api/v1/incidents/:id/managementlogs` - Retrieve audit logs for an incident's management reports
+  - **Requires**: Authentication (any authenticated user)
+  - **Path Parameters**:
+    - `id`: Incident ID (required)
+  - **Responses**:
+    - `200 OK`: List of management report audit logs
+    - `401 Unauthorized`: Missing or invalid authentication token
+    - `500 Internal Server Error`: Database error
+
 ## Role Permissions
 
 | Role       | Permissions                                                                                                                                                         |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update incident status, submit incident management reports, add comments |
-| admin      | Report incidents, view all incidents, update incident status, submit incident management reports, add comments                                                                    |
-| supervisor | Report incidents, view own department incidents |
-| manager    | Add comments, submit incident management reports, view all incidents |
+| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update incident status, submit incident management reports, add comments, view comments, view incident management reports and logs |
+| admin      | Report incidents, view all incidents, update incident status, submit incident management reports, add comments, view comments, view incident management reports and logs |
+| manager    | Report incidents, add comments, submit incident management reports, view all incidents, view comments, view incident management reports and logs                   |
+| supervisor | Report incidents, view own department incidents, update incident management reports                                                                               |
 | reporter   | Report incidents via public endpoint only, view own department incidents                                                                                            |
 
 ## Database Schema
 
-The application uses three main tables defined in `tables.sql`:
+The application uses four main tables defined in `tables.sql`:
 
 ### Users Table
 
@@ -622,30 +631,30 @@ Stores follow-up incident management data linked to incidents:
 | ------ | ---- | ----------- | ----------- |
 | id | SERIAL | PRIMARY KEY | Auto-incrementing unique identifier |
 | incident_id | INT | UNIQUE NOT NULL REFERENCES incidents(id) ON DELETE CASCADE | Linked incident |
-| impact_on_service | TEXT NOT NULL | Impact on service description |
-| contributory_factors | TEXT NOT NULL | Contributory factors identified |
-| actions_taken_outcomes | TEXT NOT NULL | Actions taken and outcomes |
-| recommendations | TEXT NOT NULL | Recommendations made |
-| lessons_learned | TEXT NOT NULL | Lessons learned |
+| impact_on_service | TEXT | NOT NULL | Impact on service description |
+| contributory_factors | TEXT | NOT NULL | Contributory factors identified |
+| actions_taken_outcomes | TEXT | NOT NULL | Actions taken and outcomes |
+| recommendations | TEXT | NOT NULL | Recommendations made |
+| lessons_learned | TEXT | NOT NULL | Lessons learned |
 | informed_patient | BOOLEAN | DEFAULT FALSE | Whether patient was informed |
 | informed_relative | BOOLEAN | DEFAULT FALSE | Whether relative was informed |
 | informed_senior_manager | BOOLEAN | DEFAULT FALSE | Whether senior manager was informed |
 | informed_pharmacist | BOOLEAN | DEFAULT FALSE | Whether pharmacist was informed |
-| police_incident_number | VARCHAR(100) | Police incident number if applicable |
-| informed_other | TEXT | Other parties informed |
-| risk_severity | INT NOT NULL | Risk severity rating |
-| risk_likelihood | INT NOT NULL | Risk likelihood rating |
-| risk_rating | INT NOT NULL | Overall risk rating |
-| ohs_absence_over_3_days | BOOLEAN | OHS absence over 3 days |
-| ohs_act_of_violence_or_danger | BOOLEAN | OHS act of violence or danger |
-| ohs_hospitalisation_over_24_hours | BOOLEAN | OHS hospitalisation over 24 hours |
-| ohs_staff_name | VARCHAR(255) | OHS staff name |
-| ohs_staff_dob | VARCHAR(50) | OHS staff date of birth |
-| ohs_staff_address | TEXT | OHS staff address |
-| manager_name | VARCHAR(255) NOT NULL | Manager name |
-| manager_signature | BOOLEAN NOT NULL DEFAULT FALSE | Manager signature |
-| manager_designation | VARCHAR(255) NOT NULL | Manager designation |
-| manager_date | VARCHAR(50) NOT NULL | Date of management review |
+| police_incident_number | VARCHAR(100) | | Police incident number if applicable |
+| informed_other | TEXT | | Other parties informed |
+| risk_severity | INT | NOT NULL | Risk severity rating |
+| risk_likelihood | INT | NOT NULL | Risk likelihood rating |
+| risk_rating | INT | NOT NULL | Overall risk rating |
+| ohs_absence_over_3_days | BOOLEAN | DEFAULT FALSE | OHS absence over 3 days |
+| ohs_act_of_violence_or_danger | BOOLEAN | DEFAULT FALSE | OHS act of violence or danger |
+| ohs_hospitalisation_over_24_hours | BOOLEAN | DEFAULT FALSE | OHS hospitalisation over 24 hours |
+| ohs_staff_name | VARCHAR(255) | | OHS staff name |
+| ohs_staff_dob | VARCHAR(50) | | OHS staff date of birth |
+| ohs_staff_address | TEXT | | OHS staff address |
+| manager_name | VARCHAR(255) | NOT NULL | Manager name |
+| manager_signature | BOOLEAN | NOT NULL DEFAULT FALSE | Manager signature |
+| manager_designation | VARCHAR(255) | NOT NULL | Manager designation |
+| manager_date | VARCHAR(50) | NOT NULL | Date of management review |
 
 **Index**: `idx_incident_management_incident_id` on `incident_management(incident_id)`.
 
@@ -661,6 +670,19 @@ Stores comments linked to incidents:
 | comment | TEXT | | Comment content |
 
 **Index**: `idx_comment` on `comments(id)`.
+
+### Incident Logs Table
+
+Stores audit logs for incident management report changes:
+
+| Column | Type | Constraints | Description |
+| ------ | ---- | ----------- | ----------- |
+| id | SERIAL | PRIMARY KEY | Auto-incrementing unique identifier |
+| incident_id | INT | REFERENCES incidents(id) ON DELETE CASCADE | Linked incident |
+| action | VARCHAR(255) | NOT NULL | Action performed (created, updated, etc.) |
+| changed_by | VARCHAR(255) | NOT NULL | User who made the change |
+| changed_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Timestamp of change |
+| details | TEXT | | Details of what changed |
 
 ## Project Structure
 
@@ -682,7 +704,9 @@ Stores comments linked to incidents:
 ├── docker-compose.yml                 # PostgreSQL + server service definitions
 ├── go.mod                             # Go module definition
 ├── go.sum                             # Go module checksums
-├── login.sh                           # Script to access database shell
+├── scripts/
+│   ├── login.sh                       # Script to access database shell
+│   └── runtests.sh                    # Helper script to run tests
 ├── commit.sh                          # Helper script for git operations
 ├── requirements.txt                   # Feature requirements
 ├── tables.sql                         # Database schema, seed data, and indexes
@@ -694,7 +718,7 @@ Stores comments linked to incidents:
 │   ├── incidents.go                   # Incident handlers (report, get, update status)
 │   ├── incidentmanagement.go          # Incident management handler (submit follow-up report)
 │   ├── main.go                        # Application initialization
-│   ├── middleware.go                   # JWT authentication middleware
+│   ├── middleware.go                  # JWT authentication middleware
 │   ├── routes.go                      # API route definitions + CORS configuration
 │   ├── server.go                      # HTTP server configuration (timeouts)
 │   ├── types.go                       # Request/response DTOs, JWT Claims
@@ -707,11 +731,13 @@ Stores comments linked to incidents:
 │   │   ├── db.go                      # Connection pool initialization, Models factory
 │   │   ├── incidentmanagement.go      # Incident management model (follow-up data)
 │   │   ├── incidents.go               # Incident model + CRUD queries
-│   │   └── users.go                   # User model + CRUD queries
+│   │   ├── users.go                   # User model + CRUD queries
+│   │   ├── testhelpers.go             # Test database setup and utilities
+│   │   └── models.go                  # Models interface definition
 │   ├── env/                           # Environment variable helpers
-│   │   └── env.go
+│   │   └── env.go                     # Environment variable parsing utilities
 │   └── logger/                        # Structured logging
-│       └── logger.go
+│       └── logger.go                  # Logging setup and utilities
 │
 └── tmp/                               # Temporary directory (used by Air for builds)
 ```
