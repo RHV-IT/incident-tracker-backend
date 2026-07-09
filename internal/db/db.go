@@ -55,7 +55,7 @@ func InitPool() (*pgxpool.Pool, error) {
 		}
 		count += 1
 		fmt.Println("Failed to connect to Database. Retrying...")
-		time.Sleep(500 * time.Millisecond)
+		time.Sleep(800 * time.Millisecond)
 		if count == 10 {
 			return nil, pingErr
 		}
