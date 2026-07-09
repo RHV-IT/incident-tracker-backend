@@ -4,9 +4,8 @@ package db
 import (
 	"context"
 	"fmt"
-	"time"
-
 	"issueTracking/internal/env"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -46,8 +45,20 @@ func InitPool() (*pgxpool.Pool, error) {
 		return nil, fmt.Errorf("unable to create connection pool: %w", err)
 	}
 
-	if err := pool.Ping(ctx); err != nil {
-		return nil, fmt.Errorf("Failed to ping database: %w", err)
+	var pingErr error
+	count := 0
+	for i := 0; i < 10; i++ {
+		pingErr = pool.Ping(ctx)
+		if pingErr == nil {
+			fmt.Println("database connection established")
+			break
+		}
+		count += 1
+		fmt.Println("Failed to connect to Database. Retrying...")
+		time.Sleep(500 * time.Millisecond)
+		if count == 10 {
+			return nil, pingErr
+		}
 	}
 
 	return pool, nil
