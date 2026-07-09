@@ -57,13 +57,11 @@ With focused effort on these areas, this can become production-ready.
 - Proper HTTP status codes
 - Pagination support
 
-### ✅ 5. Logging (7/10)
-- Structured logging implemented in `internal/logger/logger.go`
+### ✅ 5. Logging (6/10)
+- File-based logging implemented in `internal/logger/logger.go`
 - Separate log files for errors and incident updates
 - Automatic audit logging for incident updates (stored in `incident_logs` table)
 - Docker build excludes `scripts/` directory for cleaner images
-- Supports both text (dev) and JSON (production) formats
-- Request context available for tracing
 
 ---
 
@@ -472,11 +470,11 @@ func NewRole(s string) (Role, error) {
 - [ ] CSRF protection
 
 ### Observability
-- [x] Structured logging (JSON format) - Implemented
 - [ ] Request/response logging
 - [ ] Error tracking and alerting
 - [ ] Performance metrics
-- [x] Health check endpoints - `/api/v1/ping` exists
+- [x] File-based logging for errors, updates, and comments
+- [x] Health check endpoints - `/api/v1/ping`
 - [ ] Distributed tracing
 - [ ] Log aggregation setup
 
@@ -547,7 +545,7 @@ This codebase demonstrates solid mid-level engineering with:
 - ✅ Good architecture
 - ✅ Basic security
 - ✅ Clear API design
-- ✅ Structured logging implemented
+- ✅ File-based logging for different event types
 - ✅ Health check endpoint
 
 To reach senior level, focus on:

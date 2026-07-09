@@ -2,7 +2,7 @@
 
 **Code Metrics:** ~1800 lines of Go, 20 source files
 
-Go version: 1.22+
+Go version: 1.26.3
 
 ## System Overview
 

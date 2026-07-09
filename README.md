@@ -69,7 +69,7 @@ The Issue Tracker is a web application designed to help organizations (particula
 ### Prerequisites
 
 - Docker and Docker Compose (for containerized setup)
-- Go 1.22+ (if running locally without Docker)
+- Go 1.26.3 (if running locally without Docker)
 - Git (for version control)
 
 ## Setup
@@ -166,7 +166,7 @@ The Issue Tracker is a web application designed to help organizations (particula
 ### Prerequisites
 
 - Docker must be installed and running locally. Tests use [`testcontainers-go`](https://golang.testcontainers.org/) to spin up a temporary PostgreSQL container automatically.
-- Go 1.22+
+- Go 1.26.3
 
 ### Commands
 
@@ -558,7 +558,7 @@ Stores user account information:
 
 ### Incidents Table
 
-Stores comprehensive clinical incident reports (37 columns):
+Stores comprehensive clinical incident reports (40 columns):
 
 | Column                     | Type         | Constraints                   | Description                                        |
 | -------------------------- | ------------ | ----------------------------- | -------------------------------------------------- |
@@ -684,9 +684,7 @@ Stores comments linked to incidents:
 ├── go.sum                             # Go module checksums
 ├── login.sh                           # Script to access database shell
 ├── commit.sh                          # Helper script for git operations
-├── requirements.txt                   # Feature requirements
 ├── tables.sql                         # Database schema, seed data, and indexes
-├── update.txt                         # Schema/struct evolution notes
 │
 ├── cmd/                               # Application entrypoint and HTTP handlers
 │   ├── auth.go                        # Authentication handlers (register, login, reset password)

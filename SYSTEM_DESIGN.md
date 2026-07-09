@@ -6,7 +6,7 @@
 
 The Issue Tracker is a stateless RESTful API built with Go that provides incident tracking capabilities with role-based access control. The system follows a layered architecture pattern with clear separation between presentation, application, and data layers.
 
-Go version: 1.22+
+Go version: 1.26.3
 
 ## Architecture Diagram
 
@@ -440,7 +440,6 @@ Client Request
 - ✅ Unit tests for routes and handlers
 
 **Pending:**
-- ❌ Unit tests
 - ❌ Rate limiting
 - ❌ Audit logging
 - ❌ Error handling package

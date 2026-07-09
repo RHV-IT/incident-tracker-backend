@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (a *application) reportIncident(c *gin.Context) {
+// reportIncident accepts a new incident report via a public endpoint (no authentication required).
 	context := c.Request.Context()
 	var input db.IncidentReport
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -77,7 +77,7 @@ func (a *application) reportIncident(c *gin.Context) {
 	c.JSON(http.StatusOK, savedIncident)
 }
 
-func (a *application) getIncidents(c *gin.Context) {
+// getIncidents returns a paginated list of incidents. Supervisors and reporters see department-scoped results only.
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
 
@@ -126,7 +126,7 @@ func (a *application) getIncidents(c *gin.Context) {
 	})
 }
 
-func (a *application) updateIncidentStatus(c *gin.Context) {
+// updateIncidentStatus changes the status of an incident. Reporters, supervisors, and managers are forbidden.
 	context := c.Request.Context()
 	userRole := strings.ToLower(c.GetString("userRole"))
 	if userRole == "reporter" || userRole == "supervisor" || userRole == "manager" {

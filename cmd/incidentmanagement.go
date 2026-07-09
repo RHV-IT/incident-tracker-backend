@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (a *application) submitIncidentManagement(c *gin.Context) {
+// submitIncidentManagement creates a follow-up management report for an incident. Requires admin or manager role.
 	userRole := c.GetString("userRole")
 	idParams := c.Param("id")
 	id, err := strconv.Atoi(idParams)
@@ -35,7 +35,7 @@ func (a *application) submitIncidentManagement(c *gin.Context) {
 	c.JSON(http.StatusOK, incidentManagement)
 }
 
-func (a *application) getIncidentManagement(c *gin.Context) {
+// getIncidentManagement retrieves the management report for a specific incident. Requires authentication.
 	context := c.Request.Context()
 	idParams := c.Param("id")
 	id, err := strconv.Atoi(idParams)
@@ -52,7 +52,7 @@ func (a *application) getIncidentManagement(c *gin.Context) {
 	c.JSON(http.StatusOK, incidentManagement)
 }
 
-func (a *application) updateIncidentManagement(c *gin.Context) {
+// updateIncidentManagement updates an existing management report. Requires supervisor or admin role.
 	userRole := c.GetString("userRole")
 	context := c.Request.Context()
 	if userRole != "supervisor" && userRole != "admin" {
@@ -78,7 +78,7 @@ func (a *application) updateIncidentManagement(c *gin.Context) {
 	c.JSON(http.StatusOK, updateIncident)
 }
 
-func (a *application) getIncidentLogs(c *gin.Context) {
+// getIncidentLogs retrieves change logs for an incident. Requires admin role.
 	ctx := c.Request.Context()
 	userRole := c.GetString("userRole")
 	incidentId, err := strconv.Atoi(c.Param("id"))

@@ -60,9 +60,11 @@ docker compose logs -f
 curl http://localhost:3002/api/v1/ping
 
 # Login (save token)
+# Note: the default superadmin password is a bcrypt hash in the database;
+# use the reset password endpoint or set a known password before logging in.
 TOKEN=$(curl -s -X POST http://localhost:3002/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"yourpassword"}' | jq -r '.token')
+  -d '{"email":"admin@example.com","password":"<reset-via-db-or-use-another-user>"}' | jq -r '.token')
 
 # Register a new user (requires superadmin token)
 curl -X POST http://localhost:3002/api/v1/auth/register \

@@ -11,6 +11,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// application ties together the database connection pool, data models,
+// JWT secret, and allowed origins into a single server instance.
 type application struct {
 	port      int
 	jwtsecret string
@@ -19,7 +21,8 @@ type application struct {
 	origins   string
 }
 
-func main() {
+// main loads the environment, initializes the database pool and logger,
+// constructs the application, and starts the HTTP server.
 	logger.InitLogger()
 
 	_ = godotenv.Load()
