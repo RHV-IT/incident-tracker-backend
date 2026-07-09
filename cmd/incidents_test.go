@@ -157,3 +157,27 @@ func TestUpdateIncidentStatusForbidden(t *testing.T) {
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusForbidden, w.Code)
 }
+
+func TestUpdateIncidentStatusInvalidId(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
+	r := gin.Default()
+	a := &application{
+		origins: "*",
+		models:  db.NewModels(testPool),
+	}
+
+	r.PATCH("/api/v1/incidents/:id/status", mockAuthMiddleware("admin"), a.updateIncidentStatus)
+
+	payload := &db.IncidentStatusUpdate{
+		Status: "resolved",
+	}
+
+	jsonBody, _ := json.Marshal(payload)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("PATCH", "/api/v1/incidents/badid/status", bytes.NewBuffer(jsonBody))
+
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
