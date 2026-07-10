@@ -296,12 +296,13 @@ All user management endpoints require superadmin role and authentication middlew
 #### Get User
 
 - `GET /api/v1/user` - Get user information by email
-  - **Requires**: Authentication (any authenticated user)
+  - **Requires**: superadmin role
   - **Query Parameters**:
     - `email`: User's email address (required)
   - **Responses**:
     - `200 OK`: User information
     - `400 Bad Request`: Email parameter missing
+    - `403 Forbidden`: User is not a superadmin
     - `500 Internal Server Error`: Database error
 
 ### Incident Management Endpoints
@@ -517,7 +518,11 @@ All user management endpoints require superadmin role and authentication middlew
       "ohsHospitalizationOver24Hours": "boolean (optional, default false)",
       "ohsStaffName": "string (optional)",
       "ohsStaffDob": "string (optional)",
-      "ohsStaffAddress": "string (optional)"
+      "ohsStaffAddress": "string (optional)",
+      "managerName": "string (required)",
+      "managerSignature": "boolean (required)",
+      "managerDesignation": "string (required)",
+      "managerDate": "string (required)"
     }
     ```
   - **Responses**:
@@ -529,12 +534,13 @@ All user management endpoints require superadmin role and authentication middlew
 #### Get Incident Management Logs
 
 - `GET /api/v1/incidents/:id/managementlogs` - Retrieve audit logs for an incident's management reports
-  - **Requires**: Authentication (any authenticated user)
+  - **Requires**: admin role
   - **Path Parameters**:
     - `id`: Incident ID (required)
   - **Responses**:
     - `200 OK`: List of management report audit logs
     - `401 Unauthorized`: Missing or invalid authentication token
+    - `403 Forbidden`: User is not an admin
     - `500 Internal Server Error`: Database error
 
 ## Role Permissions
@@ -543,7 +549,7 @@ All user management endpoints require superadmin role and authentication middlew
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update incident status, submit incident management reports, add comments, view comments, view incident management reports and logs |
 | admin      | Report incidents, view all incidents, update incident status, submit incident management reports, add comments, view comments, view incident management reports and logs |
-| manager    | Report incidents, add comments, submit incident management reports, view all incidents, view comments, view incident management reports and logs                   |
+| manager    | Report incidents, add comments, submit incident management reports, view all incidents, view comments, view incident management reports                                                                                           |
 | supervisor | Report incidents, view own department incidents, update incident management reports                                                                               |
 | reporter   | Report incidents via public endpoint only, view own department incidents                                                                                            |
 

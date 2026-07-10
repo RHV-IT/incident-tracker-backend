@@ -123,11 +123,14 @@ curl -X PATCH http://localhost:3002/api/v1/incidents/1/status \
   -H "Content-Type: application/json" \
   -d '{"status":"resolved"}'
 
-# Get user info (requires auth)
+# Get user info (requires superadmin role)
 curl "http://localhost:3002/api/v1/user?email=test@example.com" -H "Authorization: Bearer $TOKEN"
 
-# Get comments for incident (requires admin)
+# Get comments for incident (requires admin or manager)
 curl "http://localhost:3002/api/v1/incidents/comments?incidentId=1" -H "Authorization: Bearer $TOKEN"
+
+# Get incident management logs (requires admin role)
+curl "http://localhost:3002/api/v1/incidents/1/managementlogs" -H "Authorization: Bearer $TOKEN"
 ```
 
 ## Role Permissions

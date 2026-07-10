@@ -192,7 +192,7 @@ HTTP Request → Gin Router → Middleware (if applicable) → Handler → Valid
 - Superadmin-only endpoints for user management
 - Incident reporting endpoint is public (no authentication required)
 - Incident listing requires authentication; supervisors and reporters are scoped to their department
-- Incident status update blocked for reporters; supervisors scoped to their department via `incident_ward_dept`
+- Incident status update blocked for reporters, supervisors, and managers; only admin and superadmin can update any incident status
 - Principle of least privilege applied
 
 ### Data Security
