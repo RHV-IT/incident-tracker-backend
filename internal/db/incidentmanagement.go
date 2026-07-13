@@ -224,7 +224,7 @@ func (m *IncidentManagementModel) GetIncidentManagementLogs(ctx context.Context,
 		SELECT incident_logs.*, users.name
 		FROM incident_logs INNER JOIN users ON incident_logs.changed_by=users.id
 		WHERE incident_logs.incident_id = $1 
-		ORDER by incidents_logs.incident_id DESC
+		ORDER by incident_logs.incident_id DESC;
 	`
 	rows, err := m.DB.Query(ctx, query, incidentId)
 	if err != nil {
