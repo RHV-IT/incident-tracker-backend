@@ -76,7 +76,7 @@ func TestGetIncidentsDateRange(t *testing.T) {
 		PatientId:           "iajdaj232",
 		PatientWardDept:     "icu",
 		PeopleInvolved:      "peopleInvolved",
-		DateOfIncident:      "today",
+		DateOfIncident:      "2026-07-13",
 		TimeOfIncident:      "now",
 		LocationOfIncident:  "here",
 		IncidentWardDept:    "here?",
