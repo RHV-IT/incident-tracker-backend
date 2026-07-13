@@ -3,8 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
-	"issueTracking/internal/logger"
 	"time"
+
+	"issueTracking/internal/logger"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -223,6 +224,7 @@ func (m *IncidentManagementModel) GetIncidentManagementLogs(ctx context.Context,
 		SELECT incident_logs.*, users.name
 		FROM incident_logs INNER JOIN users ON incident_logs.changed_by=users.id
 		WHERE incident_logs.incident_id = $1 
+		ORDER by incidents_logs.incident_id DESC
 	`
 	rows, err := m.DB.Query(ctx, query, incidentId)
 	if err != nil {
