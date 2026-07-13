@@ -74,11 +74,12 @@ With focused effort on these areas, this can become production-ready.
 **Current Problem:**
 ```
 Initial unit tests added for routes and handlers
-Test coverage is still low
+Test coverage is partial - key handlers and models have tests
 ```
 
 **Impact:**
-- Core routes tested, but most handlers and models lack coverage
+- Core routes tested (ping, login, register, incidents, users, incident management)
+- Most handlers and models lack coverage
 - Regressions can still go undetected in untested code paths
 - Edge cases not fully covered
 
@@ -434,7 +435,7 @@ func NewRole(s string) (Role, error) {
 ### Phase 1: Foundation (Weeks 1-2)
 - [x] Add structured logging (logrus) - Already implemented in `internal/logger/logger.go`
 - [ ] Implement error handling package
-- [x] Setup basic unit tests - Initial tests added for routes and auth handlers
+- [x] Setup basic unit tests - Initial tests added for routes and auth handlers (partially implemented)
 - [ ] Add configuration validation
 
 ### Phase 2: Security (Weeks 3-4)
@@ -482,7 +483,7 @@ func NewRole(s string) (Role, error) {
 
 ### Testing
 - [ ] Unit tests (80%+ coverage)
-- [x] Initial unit tests added for routes and handlers
+- [x] Initial unit tests added for routes and handlers (partially implemented)
 - [ ] Integration tests
 - [ ] Load testing
 - [ ] Security testing

@@ -137,10 +137,10 @@ curl "http://localhost:3002/api/v1/incidents/1/managementlogs" -H "Authorization
 
 | Role | Permissions |
 |------|-------------|
-| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update any incident status, submit incident management reports, add comments, view comments |
-| admin | Report incidents, view all incidents, update any incident status, submit incident management reports, add comments, view comments |
-| supervisor | Report incidents, view own department incidents (via `incident_ward_dept`) |
-| manager | Add comments, submit incident management reports, view all incidents |
+| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update any incident status, submit incident management reports, update incident management reports, add comments, view comments |
+| admin | Report incidents, view all incidents, update any incident status, submit incident management reports, update incident management reports, add comments, view comments |
+| supervisor | Report incidents, view own department incidents (matched via `incident_ward_dept`, `patient_ward_dept`, or `staff_place_of_work`) |
+| manager | Add comments, submit incident management reports, update incident management reports, view all incidents |
 | reporter | Report incidents via public endpoint only, view own department incidents |
 
 ## Incident Management Form
@@ -194,7 +194,7 @@ The incident management report captures follow-up documentation after an inciden
 - Response: `IncidentManagement` struct
 
 **PUT /api/v1/incidents/:id/management** - Update existing report
-- Requires: supervisor or admin role
+- Requires: manager or admin role
 - Request body: `IncidentManagement` struct
 
 ### IncidentManagement Struct

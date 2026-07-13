@@ -366,7 +366,7 @@ All user management endpoints require superadmin role and authentication middlew
   - **Requires**: Authentication (any authenticated user)
   - **Role-specific behavior**:
      - `superadmin` / `admin` / `manager`: See all incidents
-     - `supervisor` / `reporter`: See only incidents from their department (matched via `incident_ward_dept`)
+     - `supervisor` / `reporter`: See only incidents from their department (matched via `incident_ward_dept`, `patient_ward_dept`, or `staff_place_of_work`)
   - **Query Parameters**:
     - `page`: Page number (default: 1)
     - `limit`: Number of items per page (default: 10, max: 50)
@@ -434,7 +434,7 @@ All user management endpoints require superadmin role and authentication middlew
    - **Query Parameters**:
      - `incidentId`: Incident ID (required)
    - **Responses**:
-     - `200 OK`: List of comments
+     - `200 OK`: List of comments with commenter name and role
      - `403 Forbidden`: User is not an admin or manager
 
 #### Submit Incident Management Report
@@ -493,7 +493,7 @@ All user management endpoints require superadmin role and authentication middlew
 #### Update Incident Management Report
 
 - `PUT /api/v1/incidents/:id/management` - Update an existing management report
-  - **Requires**: supervisor or admin role
+  - **Requires**: manager or admin role
   - **Path Parameters**:
     - `id`: Incident ID (required)
   - **Request Body**:
@@ -538,7 +538,7 @@ All user management endpoints require superadmin role and authentication middlew
   - **Path Parameters**:
     - `id`: Incident ID (required)
   - **Responses**:
-    - `200 OK`: List of management report audit logs
+    - `200 OK`: List of management report audit logs with user names
     - `401 Unauthorized`: Missing or invalid authentication token
     - `403 Forbidden`: User is not an admin
     - `500 Internal Server Error`: Database error
@@ -547,10 +547,10 @@ All user management endpoints require superadmin role and authentication middlew
 
 | Role       | Permissions                                                                                                                                                         |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update incident status, submit incident management reports, add comments, view comments, view incident management reports and logs |
-| admin      | Report incidents, view all incidents, update incident status, submit incident management reports, add comments, view comments, view incident management reports and logs |
-| manager    | Report incidents, add comments, submit incident management reports, view all incidents, view comments, view incident management reports                                                                                           |
-| supervisor | Report incidents, view own department incidents, update incident management reports                                                                               |
+| superadmin | All endpoints including user management (register, update, disable, enable, reset password, get user), report incidents, view all incidents, update incident status, submit incident management reports, update incident management reports, add comments, view comments, view incident management reports and logs |
+| admin      | Report incidents, view all incidents, update incident status, submit incident management reports, update incident management reports, add comments, view comments, view incident management reports and logs |
+| manager    | Report incidents, add comments, submit incident management reports, update incident management reports, view all incidents, view comments, view incident management reports                                                                                           |
+| supervisor | Report incidents, view own department incidents                                                                               |
 | reporter   | Report incidents via public endpoint only, view own department incidents                                                                                            |
 
 ## Database Schema
@@ -720,15 +720,21 @@ Stores audit logs for incident management report changes:
 │
 ├── cmd/                               # Application entrypoint and HTTP handlers
 │   ├── auth.go                        # Authentication handlers (register, login, reset password)
+│   ├── auth_test.go                   # Authentication handler tests
 │   ├── comments.go                    # Comment handlers (add comment to incidents)
-│   ├── incidents.go                   # Incident handlers (report, get, update status)
 │   ├── incidentmanagement.go          # Incident management handler (submit follow-up report)
+│   ├── incidentmanagement_test.go     # Incident management handler tests
+│   ├── incidents.go                   # Incident handlers (report, get, update status)
+│   ├── incidents_test.go              # Incident handler tests
 │   ├── main.go                        # Application initialization
+│   ├── main_test.go                   # Test setup and helpers
 │   ├── middleware.go                  # JWT authentication middleware
+│   ├── ping_test.go                   # Health check test
 │   ├── routes.go                      # API route definitions + CORS configuration
 │   ├── server.go                      # HTTP server configuration (timeouts)
 │   ├── types.go                       # Request/response DTOs, JWT Claims
 │   ├── users.go                       # User management handlers (update, disable, enable, get user)
+│   ├── users_test.go                  # User handler tests
 │   └── utils.go                       # Utility functions (bcrypt password hashing)
 │
 ├── internal/                          # Private application libraries

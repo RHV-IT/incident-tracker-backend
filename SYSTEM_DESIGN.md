@@ -352,8 +352,8 @@ Client Request
 |------|-------------|
 | **superadmin** | User management (register, update, disable/enable, reset password, get user), report incidents, view all incidents, update any incident status, add comments, view comments, submit and update incident management reports, view incident management reports and logs |
 | **admin** | Report incidents, view all incidents, update any incident status, add comments, view comments, submit and update incident management reports, view incident management reports and logs |
-| **supervisor** | Report incidents, view own department incidents (via `incident_ward_dept`), update incident management reports |
-| **manager** | Report incidents, add comments, submit incident management reports, view all incidents, view comments, view incident management reports |
+| **supervisor** | Report incidents, view own department incidents (via `incident_ward_dept`) |
+| **manager** | Report incidents, add comments, submit incident management reports, update incident management reports, view all incidents, view comments, view incident management reports |
 | **reporter** | Report incidents via public endpoint only, view own department incidents |
 
 ## Deployment Architecture
@@ -440,9 +440,8 @@ Client Request
 - ✅ Unit tests for routes and handlers
 
 **Pending:**
-- ❌ Unit tests
+- ❌ Unit tests (increase coverage beyond current partial implementation)
 - ❌ Rate limiting
-- ❌ Audit logging
 - ❌ Error handling package
 - ❌ Configuration validation
 

@@ -91,6 +91,7 @@ The models are:
 - `UserModel` — CRUD on users
 - `IncidentsModel` — CRUD on incidents
 - `IncidentManagementModel` — access to incident management follow-up records
+- `CommentModel` — CRUD on incident comments
 
 ### Environment Handling (`internal/env/`)
 - Load environment variables with fallback defaults
