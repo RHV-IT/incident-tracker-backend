@@ -63,6 +63,60 @@ func TestReportIncident(t *testing.T) {
 	assert.Equal(t, "testName", response["principalName"])
 }
 
+func TestGetIncidentsDateRange(t *testing.T) {
+	db.TruncateTables(t, testPool)
+
+	gin.SetMode(gin.TestMode)
+
+	payload := &db.Incident{
+		PrincipalName:       "testName",
+		PrincipalGender:     "Male",
+		PrincipalDob:        "today",
+		PrincipalType:       "Patient",
+		PatientId:           "iajdaj232",
+		PatientWardDept:     "icu",
+		PeopleInvolved:      "peopleInvolved",
+		DateOfIncident:      "today",
+		TimeOfIncident:      "now",
+		LocationOfIncident:  "here",
+		IncidentWardDept:    "here?",
+		IsNearMiss:          false,
+		CauseGroup:          "causeGroup",
+		ReporterName:        "Akene Uzezi",
+		ReporterDesignation: "???",
+		Signature:           true,
+		ReporterInfo:        "some info",
+		ReporterDate:        "today",
+		SeverityLevel:       "minor",
+		IncidentStatus:      "unresolved",
+	}
+
+	jsonBody, _ := json.Marshal(payload)
+
+	a := &application{
+		origins: "*",
+		models:  db.NewModels(testPool),
+	}
+
+	err := insertIncident(payload, a, t)
+	assert.NoError(t, err)
+
+	r := gin.Default()
+	r.GET("/api/v1/incidents", mockAuthMiddleware("admin"), a.getIncidents)
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/incidents?dateFrom=2026-07-13&dateTo=2026-07-19", bytes.NewBuffer(jsonBody))
+
+	r.ServeHTTP(w, req)
+	var response map[string]any
+	err = json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+
+	t.Logf("response: %+v", response)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
 func TestGetIncidents(t *testing.T) {
 	db.TruncateTables(t, testPool)
 
