@@ -1,9 +1,10 @@
 package main
 
 import (
-	"issueTracking/internal/db"
 	"net/http"
 	"strconv"
+
+	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 )
@@ -55,7 +56,7 @@ func (a *application) getIncidentManagement(c *gin.Context) {
 func (a *application) updateIncidentManagement(c *gin.Context) {
 	userRole := c.GetString("userRole")
 	context := c.Request.Context()
-	if userRole != "supervisor" && userRole != "admin" {
+	if userRole != "manager" && userRole != "admin" {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized. Must be a supervisor or admin"})
 		return
 	}
