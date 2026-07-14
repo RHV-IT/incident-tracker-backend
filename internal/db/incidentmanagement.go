@@ -2,11 +2,12 @@ package db
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"issueTracking/internal/logger"
 	"time"
 
-	"issueTracking/internal/logger"
-
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -123,6 +124,9 @@ func (m *IncidentManagementModel) FetchById(ctx context.Context, id int) (*Incid
 		&incidentmanagement.ManagerDate,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("database query error: %w", err)
 	}
 
