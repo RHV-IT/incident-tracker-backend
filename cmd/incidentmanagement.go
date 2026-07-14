@@ -1,9 +1,10 @@
 package main
 
 import (
-	"issueTracking/internal/db"
 	"net/http"
 	"strconv"
+
+	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 )
@@ -86,7 +87,7 @@ func (a *application) getIncidentLogs(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid id parameter was passed"})
 		return
 	}
-	if userRole != "admin" {
+	if userRole != "admin" && userRole != "manager" {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "you are not allowed to view incident change logs"})
 		return
 	}
