@@ -121,4 +121,15 @@ func (a *application) getUser(c *gin.Context) {
 }
 
 func (a *application) userResetPassword(c *gin.Context) {
+	userEmail := c.GetString("userEmail")
+	var userResetRequest UserResetPassword
+	if err := c.ShouldBindJSON(&userResetRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Request"})
+		return
+	}
+
+	if userResetRequest.Email != userEmail {
+		c.JSON(http.StatusForbidden, gin.H{"error": "you are not allowed to reset another users password"})
+		return
+	}
 }
