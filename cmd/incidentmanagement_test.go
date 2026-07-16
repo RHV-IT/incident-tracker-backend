@@ -59,7 +59,7 @@ func TestGetIncidentLogsInvalidRole(t *testing.T) {
 	}
 
 	jsonBody, _ := json.Marshal(&payload)
-	r.GET("/api/v1/incidents/:id/managementlogs", mockAuthMiddleware("manager"), a.getIncidentLogs)
+	r.GET("/api/v1/incidents/:id/managementlogs", mockAuthMiddleware("supervisor"), a.getIncidentLogs)
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/api/v1/incidents/1/managementlogs", bytes.NewBuffer(jsonBody))

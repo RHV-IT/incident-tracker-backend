@@ -43,6 +43,7 @@ func (a *application) routes() http.Handler {
 			authGroup.PUT("/disable", a.authMiddleware(), a.disable)
 			authGroup.PUT("/enable", a.authMiddleware(), a.enable)
 			authGroup.PUT("/resetpassword", a.authMiddleware(), a.resetPassword)
+			authGroup.PUT("userResetPassword", a.authMiddleware(), a.userResetPassword)
 		}
 		v1.POST("/incidents", a.reportIncident)
 		v1.GET("/incidents", a.authMiddleware(), a.getIncidents)

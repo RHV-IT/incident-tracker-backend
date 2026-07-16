@@ -33,6 +33,31 @@ func (a *application) register(c *gin.Context) {
 		return
 	}
 
+	if user.Password == "" {
+		hashedPassword, err := HashPassword("redeemershealthvillage")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to hash password"})
+			return
+		}
+		departmentClean := strings.ToLower(strings.TrimSpace(user.Department))
+
+		roleClean := strings.ToLower(strings.TrimSpace(user.Role))
+		if roleClean != "reporter" && roleClean != "supervisor" && roleClean != "admin" && roleClean != "superadmin" && roleClean != "manager" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role specified"})
+			return
+		}
+
+		newUser, err := a.models.Users.Insert(context, user.Name, emailClean, hashedPassword, roleClean, departmentClean)
+		if err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to add user"})
+			return
+		}
+
+		c.JSON(http.StatusCreated, newUser)
+		return
+	}
+
 	hashedPassword, err := HashPassword(user.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
@@ -54,7 +79,6 @@ func (a *application) register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, newUser)
-
 }
 
 func (a *application) login(c *gin.Context) {
@@ -129,7 +153,6 @@ func (a *application) resetPassword(c *gin.Context) {
 	}
 
 	hashedPassword, err := HashPassword(req.Password)
-
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
