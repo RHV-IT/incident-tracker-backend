@@ -121,6 +121,7 @@ func (a *application) getUser(c *gin.Context) {
 }
 
 func (a *application) userResetPassword(c *gin.Context) {
+	context := c.Request.Context()
 	userEmail := c.GetString("userEmail")
 	var userResetRequest UserResetPassword
 	if err := c.ShouldBindJSON(&userResetRequest); err != nil {
@@ -138,4 +139,11 @@ func (a *application) userResetPassword(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to hash new password"})
 		return
 	}
+
+	if err := a.models.Users.UserResetPassword(context, &userResetRequest.Email, &updateHashPassword); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "password changed successfully"})
 }

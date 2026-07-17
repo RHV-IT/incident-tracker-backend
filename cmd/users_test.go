@@ -154,3 +154,29 @@ func TestGetUsersSuccess(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 }
+
+func TestUserResetPassword(t *testing.T) {
+	db.TruncateTables(t, testPool)
+
+	gin.SetMode(gin.TestMode)
+
+	a := &application{
+		origins: "*",
+		models:  db.NewModels(testPool),
+	}
+
+	err := insertUser(a, t)
+	assert.NoError(t, err)
+
+	jsonBody, _ := json.Marshal(&map[string]any{
+		"email":       "testuser@example.com",
+		"newPassword": "resetpassword",
+	})
+
+	r := gin.Default()
+	r.PUT("/api/v1/auth/userResetPassword", mockEmailMiddleware("testuser@example.com"), a.userResetPassword)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("PUT", "/api/v1/auth/userResetPassword", bytes.NewBuffer(jsonBody))
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
+}

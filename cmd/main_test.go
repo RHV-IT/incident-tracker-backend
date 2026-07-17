@@ -22,6 +22,13 @@ func mockAuthMiddleware(role string) gin.HandlerFunc {
 	}
 }
 
+func mockEmailMiddleware(email string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Set("userEmail", email)
+		c.Next()
+	}
+}
+
 func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
 
