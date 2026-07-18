@@ -47,6 +47,7 @@ func (a *application) routes() http.Handler {
 		}
 		v1.POST("/incidents", a.reportIncident)
 		v1.GET("/incidents", a.authMiddleware(), a.getIncidents)
+		v1.GET("/users", a.authMiddleware(), a.getUsers)
 		v1.GET("/user", a.authMiddleware(), a.getUser)
 		v1.PATCH("/incidents/:id/status", a.authMiddleware(), a.updateIncidentStatus)
 		v1.POST("/incidents/:id/management", a.authMiddleware(), a.submitIncidentManagement)
