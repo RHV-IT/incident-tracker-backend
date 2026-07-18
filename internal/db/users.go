@@ -97,3 +97,7 @@ func (m *UserModel) ResetPassword(ctx context.Context, user *User) (*User, error
 	}
 	return user, nil
 }
+
+func (m *UserModel) GetUsers(ctx context.Context) ([]User, error) {
+	return nil, nil
+}

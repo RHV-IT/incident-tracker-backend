@@ -3,10 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"issueTracking/internal/db"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -179,4 +180,31 @@ func TestUserResetPassword(t *testing.T) {
 	req, _ := http.NewRequest("PUT", "/api/v1/auth/userResetPassword", bytes.NewBuffer(jsonBody))
 	r.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestGetUsersInvalidRole(t *testing.T) {
+	db.TruncateTables(t, testPool)
+
+	a := &application{
+		origins: "*",
+		models:  db.NewModels(testPool),
+	}
+
+	jsonBody, _ := json.Marshal(&map[string]any{
+		"test": "test",
+	})
+
+	r := gin.Default()
+	r.GET("/api/v1/users", mockAuthMiddleware("admin"), a.getUsers)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/users", bytes.NewBuffer(jsonBody))
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusForbidden, w.Code)
+
+	var response map[string]any
+
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+
+	assert.Equal(t, "only super admins can fetch all users", response["error"])
 }
