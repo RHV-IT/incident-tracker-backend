@@ -120,6 +120,14 @@ func (a *application) getUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+func (a *application) getUsers(c *gin.Context) {
+	userRole := c.GetString("userRole")
+	if userRole != "superadmin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "only super admins can fetch all users"})
+		return
+	}
+}
+
 func (a *application) userResetPassword(c *gin.Context) {
 	context := c.Request.Context()
 	userEmail := c.GetString("userEmail")
