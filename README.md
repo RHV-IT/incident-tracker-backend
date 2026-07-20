@@ -215,3 +215,5 @@ For full API documentation, request/response schemas, and role permissions, see 
 For architecture, layering, and design decisions, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 For database schema details, see `tables.sql`.
+
+For user API routes, roles, inputs, and outputs, see [users.md](users.md).
