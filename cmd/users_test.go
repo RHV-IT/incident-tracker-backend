@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -207,4 +208,33 @@ func TestGetUsersInvalidRole(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, "only super admins can fetch all users", response["error"])
+}
+
+func TestGetUsers(t *testing.T) {
+	db.TruncateTables(t, testPool)
+
+	a := &application{
+		origins: "*",
+		models:  db.NewModels(testPool),
+	}
+
+	insertUser(a, t)
+
+	jsonBody, _ := json.Marshal(&map[string]any{
+		"test": "test",
+	})
+
+	r := gin.Default()
+	r.GET("/api/v1/users", mockAuthMiddleware("superadmin"), a.getUsers)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/users", bytes.NewBuffer(jsonBody))
+	r.ServeHTTP(w, req)
+
+	var response map[string]any
+
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	fmt.Printf("reponse: %d", response["error"])
+
+	assert.Equal(t, http.StatusOK, w.Code)
 }

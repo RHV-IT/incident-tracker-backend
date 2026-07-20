@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -126,6 +127,30 @@ func (a *application) getUsers(c *gin.Context) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "only super admins can fetch all users"})
 		return
 	}
+	context := c.Request.Context()
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 || limit > 50 {
+		limit = 10
+	}
+	offset := (page - 1) * limit
+	users, totalPages, totalItems, err := a.models.Users.GetUsers(context, &limit, &offset)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get users"})
+		return
+	}
+	c.JSON(http.StatusOK, PaginatedUserResponse{
+		Data: users,
+		Pagination: PaginationMeta{
+			CurrentPage: page,
+			PageSize:    limit,
+			TotalItems:  totalItems,
+			TotalPages:  totalPages,
+		},
+	})
 }
 
 func (a *application) userResetPassword(c *gin.Context) {

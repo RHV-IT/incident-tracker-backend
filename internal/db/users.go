@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -14,7 +15,7 @@ type UserModel struct {
 }
 
 type User struct {
-	Id         int    `json:"id"`
+	Id         int    `json:"-"`
 	Name       string `json:"name"`
 	Email      string `json:"email"`
 	Password   string `json:"-"`
@@ -98,6 +99,42 @@ func (m *UserModel) ResetPassword(ctx context.Context, user *User) (*User, error
 	return user, nil
 }
 
-func (m *UserModel) GetUsers(ctx context.Context) ([]User, error) {
-	return nil, nil
+func (m *UserModel) GetUsers(ctx context.Context, limit, offset *int) ([]User, int, int, error) {
+	var totalItems int
+	err := m.DB.QueryRow(ctx, "SELECT COUNT(*) FROM users").Scan(&totalItems)
+	if err != nil {
+		return nil, 0, 0, fmt.Errorf("database query error: %w", err)
+	}
+
+	query := `
+		SELECT name, email, role, department, disabled
+		FROM users
+		ORDER BY id DESC
+		LIMIT $1 AND OFFSET $2
+	`
+	rows, err := m.DB.Query(ctx, query, limit, offset)
+	if err != nil {
+		return nil, 0, 0, err
+	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var user User
+		err := rows.Scan(&user.Name, &user.Email, &user.Role, &user.Department, &user.Disabled)
+		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return nil, 0, 0, nil
+			}
+			return nil, 0, 0, fmt.Errorf("database query error: %w", err)
+		}
+		users = append(users, user)
+	}
+
+	totalPages := int(math.Ceil(float64(totalItems) / float64(*limit)))
+	if totalPages == 0 {
+		totalPages = 1
+	}
+
+	return users, totalPages, totalItems, nil
 }

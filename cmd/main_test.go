@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"issueTracking/internal/db"
 	"log"
 	"os"
 	"testing"
+
+	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 

@@ -59,6 +59,11 @@ type PaginatedIncidentResponse struct {
 	Pagination PaginationMeta      `json:"pagination"`
 }
 
+type PaginatedUserResponse struct {
+	Data       []db.User      `json:"data"`
+	Pagination PaginationMeta `json:"pagination"`
+}
+
 type IncidentStatusUpdate struct {
 	Status string `json:"status" binding:"required"`
 }
