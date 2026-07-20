@@ -180,3 +180,11 @@ func (a *application) userResetPassword(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "password changed successfully"})
 }
+
+func (a *application) searchUsers(c *gin.Context) {
+	searchQuery := c.Query("searchQuery")
+	if searchQuery == "" {
+		a.getUsers(c)
+		return
+	}
+}

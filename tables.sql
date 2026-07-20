@@ -130,3 +130,9 @@ CREATE INDEX IF NOT EXISTS idx_incident_management_incident_id ON incident_manag
 CREATE INDEX IF NOT EXISTS idx_incident_logs_incident_id ON incident_logs (incident_id);
 
 CREATE INDEX IF NOT EXISTS idx_comment ON comments (id);
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+CREATE INDEX IF NOT EXISTS idx_users_global_search_trgm
+ON users
+USING gin ((name || ' ' || email || ' ' || role || ' ' || department) gin_trgm_ops);

@@ -3,10 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"issueTracking/internal/db"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -237,4 +238,23 @@ func TestUpdateUser(t *testing.T) {
 	user := response["user"].(map[string]any)
 
 	assert.Equal(t, "superadmin", user["role"])
+}
+
+func TestGetUsersNoQuery(t *testing.T) {
+	a := &application{
+		origins: "*",
+		models:  db.NewModels(testPool),
+	}
+
+	payload, _ := json.Marshal(&map[string]any{
+		"test": "test",
+	})
+
+	r := gin.Default()
+	r.GET("/api/v1/searchUsers", mockAuthMiddleware("superadmin"), a.searchUsers)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/searchUsers", bytes.NewBuffer(payload))
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
 }
