@@ -110,7 +110,7 @@ func (m *UserModel) GetUsers(ctx context.Context, limit, offset *int) ([]User, i
 		SELECT name, email, role, department, disabled
 		FROM users
 		ORDER BY id DESC
-		LIMIT $1 AND OFFSET $2
+		LIMIT $1 OFFSET $2
 	`
 	rows, err := m.DB.Query(ctx, query, limit, offset)
 	if err != nil {

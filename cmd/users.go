@@ -139,7 +139,7 @@ func (a *application) getUsers(c *gin.Context) {
 	offset := (page - 1) * limit
 	users, totalPages, totalItems, err := a.models.Users.GetUsers(context, &limit, &offset)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get users"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, PaginatedUserResponse{
