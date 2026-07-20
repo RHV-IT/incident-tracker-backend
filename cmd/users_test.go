@@ -271,12 +271,13 @@ func TestSearchUsers(t *testing.T) {
 		"test": "test",
 	})
 
-	insertUser(a, t)
+	err := insertUser(a, t)
+	assert.NoError(t, err)
 
 	r := gin.Default()
 	r.GET("/api/v1/searchUsers", mockAuthMiddleware("superadmin"), a.searchUsers)
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/api/v1/searchUsers?searchQuery='testuser@example.com'", bytes.NewBuffer(payload))
+	req, _ := http.NewRequest("GET", "/api/v1/searchUsers?searchQuery=admin", bytes.NewBuffer(payload))
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)

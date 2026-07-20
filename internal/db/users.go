@@ -15,7 +15,7 @@ type UserModel struct {
 }
 
 type User struct {
-	Id         int    `json:"-"`
+	Id         int    `json:"id"`
 	Name       string `json:"name"`
 	Email      string `json:"email"`
 	Password   string `json:"-"`
@@ -142,9 +142,9 @@ func (m *UserModel) GetUsers(ctx context.Context, limit, offset *int) ([]User, i
 func (m *UserModel) SearchUsers(ctx context.Context, searchQuery string) ([]User, error) {
 	safeSearchTerm := fmt.Sprintf("%%%s%%", searchQuery)
 	query := `
-		SELECT name, email, role, department, disabled
+		SELECT id, name, email, password, role, department, disabled
 		FROM users
-		WHERE (name || ' ' || email || ' ' || role || ' ' || department || ' ' || disabled) ILIKE $1;
+		WHERE (name || ' ' || email || ' ' || role || ' ' || department) ILIKE $1;
 	`
 
 	rows, err := m.DB.Query(ctx, query, safeSearchTerm)
