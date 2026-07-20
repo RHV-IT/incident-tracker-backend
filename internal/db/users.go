@@ -138,3 +138,25 @@ func (m *UserModel) GetUsers(ctx context.Context, limit, offset *int) ([]User, i
 
 	return users, totalPages, totalItems, nil
 }
+
+func (m *UserModel) SearchUsers(ctx context.Context, searchQuery string) ([]User, error) {
+	safeSearchTerm := fmt.Sprintf("%%%s%%", searchQuery)
+	query := `
+		SELECT name, email, role, department, disabled
+		FROM users
+		WHERE (name || ' ' || email || ' ' || role || ' ' || department || ' ' disabled) ILIKE $1;
+	`
+
+	rows, err := m.DB.Query(ctx, query, safeSearchTerm)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute user query: %w", err)
+	}
+	defer rows.Close()
+
+	users, err := pgx.CollectRows(rows, pgx.RowToStructByName[User])
+	if err != nil {
+		return nil, fmt.Errorf("failed to scan rows into user struct: %w", err)
+	}
+
+	return users, nil
+}

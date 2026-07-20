@@ -258,3 +258,26 @@ func TestGetUsersNoQuery(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 }
+
+func TestSearchUsers(t *testing.T) {
+	db.TruncateTables(t, testPool)
+
+	a := &application{
+		origins: "*",
+		models:  db.NewModels(testPool),
+	}
+
+	payload, _ := json.Marshal(&map[string]any{
+		"test": "test",
+	})
+
+	insertUser(a, t)
+
+	r := gin.Default()
+	r.GET("/api/v1/searchUsers", mockAuthMiddleware("superadmin"), a.searchUsers)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/searchUsers?searchQuery='testuser@example.com'", bytes.NewBuffer(payload))
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+}

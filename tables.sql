@@ -135,4 +135,4 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 CREATE INDEX IF NOT EXISTS idx_users_global_search_trgm
 ON users
-USING gin ((name || ' ' || email || ' ' || role || ' ' || department) gin_trgm_ops);
+USING gin ((name || ' ' || email || ' ' || role || ' ' || department || ' ' || disabled) gin_trgm_ops);

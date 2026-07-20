@@ -182,9 +182,22 @@ func (a *application) userResetPassword(c *gin.Context) {
 }
 
 func (a *application) searchUsers(c *gin.Context) {
+	userRole := c.GetString("userRole")
+	if userRole != "superadmin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Only superadmins are allowed access to this route"})
+		return
+	}
 	searchQuery := c.Query("searchQuery")
 	if searchQuery == "" {
 		a.getUsers(c)
 		return
 	}
+	context := c.Request.Context()
+	users, err := a.models.Users.SearchUsers(context, searchQuery)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"users": users})
 }
