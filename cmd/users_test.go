@@ -3,12 +3,10 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"issueTracking/internal/db"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -234,7 +232,6 @@ func TestGetUsers(t *testing.T) {
 
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
-	fmt.Printf("reponse: %d", response["error"])
 
 	assert.Equal(t, http.StatusOK, w.Code)
 }
