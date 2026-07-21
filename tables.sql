@@ -133,7 +133,14 @@ CREATE TABLE death_reports (
   coding VARCHAR(100),
   type VARCHAR(100) DEFAULT 'Clinincal Incident',
   category VARCHAR(255),
-  sub_category VARCHAR(100)
+  sub_category VARCHAR(100),
+  risk_grading VARCHAR(100),
+  result VARCHAR(255),
+  actual_harm VARCHAR(255),
+  potential_harm VARCHAR(255),
+  details TEXT,
+  incident_date VARCHAR(50),
+  incident_time VARCHAR(50)
 );
 
 -- Seed Initial Super Admin
