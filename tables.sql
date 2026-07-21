@@ -118,6 +118,13 @@ CREATE TABLE comments (
     comment TEXT
 );
 
+CREATE TABLE death_reports (
+  id SERIAL PRIMARY KEY,
+  report_id INT,
+  ref VARCHAR(100),
+  reported_date varchar(50)
+)
+
 -- Seed Initial Super Admin
 INSERT INTO users (name, email, password, role, department) 
 VALUES ('super admin', 'admin@example.com', '$2a$10$UQgnunKYIsM.hTWtjYooG.SPNKBqywEbOKddh1tU4tJuDiqfcn5Dm', 'superadmin', 'it');
