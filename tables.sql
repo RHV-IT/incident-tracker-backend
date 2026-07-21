@@ -123,7 +123,7 @@ CREATE TABLE death_reports (
   report_id INT,
   ref VARCHAR(100),
   reported_date varchar(50)
-)
+);
 
 -- Seed Initial Super Admin
 INSERT INTO users (name, email, password, role, department) 
