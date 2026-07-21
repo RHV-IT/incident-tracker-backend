@@ -96,7 +96,7 @@ type IncidentReport struct {
 type Incident IncidentReport
 
 type IncidentStatusUpdate struct {
-	Status string `json:"status" binding:"required"`
+	Status string `json:"incidentStatus" binding:"required"`
 }
 
 func (m *IncidentsModel) Insert(ctx context.Context, incident *Incident) (*Incident, error) {
