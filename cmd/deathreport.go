@@ -1,8 +1,10 @@
 package main
 
 import (
-	"issueTracking/internal/db"
 	"net/http"
+	"strconv"
+
+	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,4 +23,12 @@ func (a *application) deathReport(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "The death has been reported"})
+}
+
+func (a *application) updateDeathReport(c *gin.Context) {
+	_, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter was passed"})
+		return
+	}
 }

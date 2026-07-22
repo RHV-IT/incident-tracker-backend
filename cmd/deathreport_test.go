@@ -3,10 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"issueTracking/internal/db"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -124,4 +125,30 @@ func TestInsertDeathReportSuccess(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &response)
 
 	assert.Equal(t, "The death has been reported", response["message"])
+}
+
+func TestUpdateRequestInvalidId(t *testing.T) {
+	db.TruncateTables(t, testPool)
+
+	a := &application{
+		origins: "*",
+		models:  db.NewModels(testPool),
+	}
+
+	payload, _ := json.Marshal(&map[string]any{
+		"test": "test",
+	})
+	r := gin.Default()
+	r.PUT("/deathreport/:id", a.updateDeathReport)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("PUT", "/deathreport/test", bytes.NewBuffer(payload))
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+
+	var response map[string]any
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	assert.NoError(t, err)
+
+	assert.Equal(t, "Invalid id parameter was passed", response["error"])
 }
