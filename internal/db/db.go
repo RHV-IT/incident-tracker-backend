@@ -15,6 +15,7 @@ type Models struct {
 	Incidents          IncidentsModel
 	IncidentManagement IncidentManagementModel
 	Comments           CommentModel
+	DeathReport        DeathReportModel
 }
 
 func NewModels(db *pgxpool.Pool) Models {
@@ -23,6 +24,7 @@ func NewModels(db *pgxpool.Pool) Models {
 		Incidents:          IncidentsModel{DB: db},
 		IncidentManagement: IncidentManagementModel{DB: db},
 		Comments:           CommentModel{DB: db},
+		DeathReport:        DeathReportModel{DB: db},
 	}
 }
 
