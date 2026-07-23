@@ -176,6 +176,24 @@ CREATE INDEX IF NOT EXISTS idx_users_global_search_trgm
 ON users
 USING gin ((name || ' ' || email || ' ' || role || ' ' || department) gin_trgm_ops);
 
+CREATE INDEX IF NOT EXISTS idx_users_global_search_trgm
+on incidents
+USING gin ((
+  principal_name || ' ' ||
+  COALESCE(patient_id, '') || ' ' ||
+  reporter_name || ' ' ||
+  COALESCE(prescribing_doctor, '') || ' ' ||
+  location_of_incident || ' ' ||
+  incident_ward_dept || ' ' ||
+  cause_group || ' ' ||
+  causes || ' ' ||
+  severity_level || ' ' ||
+  incident_status || ' ' ||
+  COALESCE(equipment_involved, '') || ' ' ||
+  COALESCE(equipment_number, '') || ' ' ||
+) gin_trgm_ops
+);
+
 CREATE INDEX IF NOT EXISTS idx_death_reports_id_desc ON death_reports (id DESC);
 
 CREATE INDEX IF NOT EXISTS idx_death_reports_ref ON death_reports (ref);
