@@ -1,10 +1,11 @@
 package main
 
 import (
-	"issueTracking/internal/db"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 )
@@ -205,4 +206,12 @@ func (a *application) updateIncidentStatus(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, incident)
+}
+
+func (a *application) searchIncidents(c *gin.Context) {
+	searchQuery := c.Param("searchQuery")
+	if searchQuery == "" {
+		a.getIncidents(c)
+		return
+	}
 }
