@@ -3,10 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"issueTracking/internal/db"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"issueTracking/internal/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -354,6 +355,52 @@ func TestSubmitIncidentManagement(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/api/v1/incidents/1/management", bytes.NewBuffer(jsonBody))
 
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestSearchIncidentsNoQuery(t *testing.T) {
+	db.TruncateTables(t, testPool)
+
+	a := &application{
+		origins: "*",
+		models:  db.NewModels(testPool),
+	}
+
+	incidentPayload := &db.Incident{
+		PrincipalName:       "testName",
+		PrincipalGender:     "Male",
+		PrincipalDob:        "today",
+		PrincipalType:       "Patient",
+		PatientId:           "iajdaj232",
+		PatientWardDept:     "icu",
+		PeopleInvolved:      "peopleInvolved",
+		DateOfIncident:      "today",
+		TimeOfIncident:      "now",
+		LocationOfIncident:  "here",
+		IncidentWardDept:    "here?",
+		IsNearMiss:          false,
+		CauseGroup:          "causeGroup",
+		ReporterName:        "Akene Uzezi",
+		ReporterDesignation: "???",
+		Signature:           true,
+		ReporterInfo:        "some info",
+		ReporterDate:        "today",
+		SeverityLevel:       "minor",
+		IncidentStatus:      "unresolved",
+	}
+
+	test, _ := json.Marshal(&map[string]any{
+		"test": "test",
+	})
+
+	err := insertIncident(incidentPayload, a, t)
+	assert.NoError(t, err)
+	r := gin.Default()
+	r.GET("/api/v1/searchIncidents", mockAuthMiddleware("superadmin"), a.searchIncidents)
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/api/v1/searchIncidents", bytes.NewBuffer(test))
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
