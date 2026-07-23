@@ -59,6 +59,7 @@ func (a *application) routes() http.Handler {
 		v1.GET("/searchUsers", a.authMiddleware(), a.searchUsers)
 		v1.POST("/deathreport", a.deathReport)
 		v1.PUT("/deathreport/:id", a.updateDeathReport)
+		v1.GET("/deathreport/:query", a.searchDeathReport)
 	}
 
 	return g

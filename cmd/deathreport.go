@@ -32,3 +32,6 @@ func (a *application) updateDeathReport(c *gin.Context) {
 		return
 	}
 }
+
+func (a *application) searchDeathReport(c *gin.Context) {
+}
