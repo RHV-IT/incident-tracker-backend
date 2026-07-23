@@ -176,7 +176,7 @@ CREATE INDEX IF NOT EXISTS idx_users_global_search_trgm
 ON users
 USING gin ((name || ' ' || email || ' ' || role || ' ' || department) gin_trgm_ops);
 
-CREATE INDEX IF NOT EXISTS idx_users_global_search_trgm
+CREATE INDEX IF NOT EXISTS idx_incidents_global_search_trgm
 on incidents
 USING gin ((
   principal_name || ' ' ||
@@ -190,7 +190,7 @@ USING gin ((
   severity_level || ' ' ||
   incident_status || ' ' ||
   COALESCE(equipment_involved, '') || ' ' ||
-  COALESCE(equipment_number, '') || ' ' ||
+  COALESCE(equipment_number, '')
 ) gin_trgm_ops
 );
 
